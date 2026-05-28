@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "magnon-cnot"
+version = "1.0.0"
+description = "Classical CNOT gate via conditional Josephson coupling in magnon BEC"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Bao-Duy Le", email = "24130012@student.hcmus.edu.vn"},
+]
+dependencies = [
+    "numpy>=1.21",
+    "scipy>=1.7",
+    "matplotlib>=3.5",
+]
+
+[project.optional-dependencies]
+gpu = ["cupy-cuda12x"]
+
+[project.urls]
+Repository = "https://github.com/[username]/magnon-cnot"
