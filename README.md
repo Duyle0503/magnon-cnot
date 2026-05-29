@@ -58,8 +58,7 @@ magnon-cnot/
 
 If you use this code, please cite:
 
-> B.-D. Le, "Classical CNOT gate via conditional Josephson coupling in a magnon
-> Bose–Einstein condensate," *Appl. Phys. Lett.* (2025). [submitted]
+> Waiting....
 
 ## References
 
