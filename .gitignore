@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pdf
+*.png
+*.txt
+!README.md
+!LICENSE
+.ipynb_checkpoints/
