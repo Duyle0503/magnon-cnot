@@ -1,0 +1,730 @@
+{
+  "status": "NO-GO_REDUCED_MODEL",
+  "scope": "wave-vector-selective receiver plus equivalent-source 2D thin-film magnetostatic transfer field and linear spinor GPE; logical states are +/-q components; not fabrication-ready full 3D micromagnetics",
+  "checks": {
+    "gpu": true,
+    "positive_barrier": true,
+    "WKB_couplings_consistently_projected_in_spinor_Hamiltonian": true,
+    "reported_grid_is_20nm": true,
+    "extracted_couplings_below_current_WKB_ceiling": true,
+    "basis_capture_above_99pct": true,
+    "conditional_proof_of_principle_fidelity_above_80pct": false,
+    "loss_inclusive_absolute_fidelity_above_80pct": false,
+    "K_convergence_below_5pct": true,
+    "fidelity_convergence_below_1pct": false,
+    "time_sampling_convergence_below_0p2pct": true,
+    "forbidden_barrier_margin_at_least_20pct": true,
+    "selected_cone_below_45deg": true,
+    "vertical_separation_positive": true,
+    "nonlinear_norm_error_below_1e-6": true,
+    "preregistered_transducer_region_90pct_pass": false
+  },
+  "failed_checks": [
+    "conditional_proof_of_principle_fidelity_above_80pct",
+    "loss_inclusive_absolute_fidelity_above_80pct",
+    "fidelity_convergence_below_1pct",
+    "preregistered_transducer_region_90pct_pass"
+  ],
+  "provenance": {
+    "literature_baseline": [
+      "Ms",
+      "Aex",
+      "gamma",
+      "alpha",
+      "D",
+      "omega_BEC"
+    ],
+    "assumed_proof_of_principle_design": [
+      "seed",
+      "Lx_m",
+      "Ly_m",
+      "film_thickness_m",
+      "target_centre_y_m",
+      "target_radius_x_m",
+      "target_radius_y_m",
+      "control_x_m",
+      "control_y_m",
+      "control_radius_m",
+      "control_target_vertical_separation_m",
+      "local_geometry_variants",
+      "q_BEC_rad_per_m",
+      "phase_array_elements",
+      "phase_array_spacing_m",
+      "phase_array_matched_control_state",
+      "transducer_audit_samples",
+      "transducer_efficiency_scan",
+      "array_phase_error_deg_scan",
+      "array_amplitude_rms_scan",
+      "cone_scan",
+      "barrier_T_scan",
+      "barrier_width_m_scan",
+      "barrier_floor_T",
+      "minimum_forbidden_margin_fraction",
+      "candidate_count_full_spinor",
+      "gate_search_max_s",
+      "spatial_modes",
+      "final_reporting_grid_m"
+    ],
+    "numerically_extracted": [
+      "receiver-transduced barrier field",
+      "spinor eigen-splittings K0,K1",
+      "truth-table populations"
+    ]
+  },
+  "configuration": {
+    "seed": 20260720,
+    "Lx_m": 4.8e-06,
+    "Ly_m": 3.84e-06,
+    "film_thickness_m": 6.4e-08,
+    "target_centre_y_m": 7e-07,
+    "target_radius_x_m": 1.45e-06,
+    "target_radius_y_m": 6.2e-07,
+    "control_x_m": 0.0,
+    "control_y_m": -1.8e-07,
+    "control_radius_m": 4.8e-07,
+    "control_target_vertical_separation_m": 1e-07,
+    "local_geometry_variants": [
+      {
+        "label": "baseline",
+        "z_m": 1e-07,
+        "control_y_m": -1.8e-07,
+        "control_radius_m": 4.8e-07
+      },
+      {
+        "label": "z_80nm",
+        "z_m": 8e-08,
+        "control_y_m": -1.8e-07,
+        "control_radius_m": 4.8e-07
+      },
+      {
+        "label": "z_120nm",
+        "z_m": 1.2e-07,
+        "control_y_m": -1.8e-07,
+        "control_radius_m": 4.8e-07
+      },
+      {
+        "label": "y_minus",
+        "z_m": 1e-07,
+        "control_y_m": -3e-07,
+        "control_radius_m": 4.8e-07
+      },
+      {
+        "label": "y_plus",
+        "z_m": 1e-07,
+        "control_y_m": -6e-08,
+        "control_radius_m": 4.8e-07
+      },
+      {
+        "label": "radius_minus10pct",
+        "z_m": 1e-07,
+        "control_y_m": -1.8e-07,
+        "control_radius_m": 4.32e-07
+      },
+      {
+        "label": "radius_plus10pct",
+        "z_m": 1e-07,
+        "control_y_m": -1.8e-07,
+        "control_radius_m": 5.28e-07
+      }
+    ],
+    "q_BEC_rad_per_m": 5000000.0,
+    "phase_array_elements": 16,
+    "phase_array_spacing_m": 3.141592653589793e-07,
+    "phase_array_matched_control_state": 1,
+    "transducer_audit_samples": 0,
+    "transducer_efficiency_scan": [],
+    "array_phase_error_deg_scan": [
+      0.0,
+      2.0,
+      5.0,
+      10.0
+    ],
+    "array_amplitude_rms_scan": [
+      0.0,
+      0.05,
+      0.1
+    ],
+    "cone_scan": [
+      0.1,
+      0.7,
+      9
+    ],
+    "barrier_T_scan": [
+      0.015,
+      0.07,
+      23
+    ],
+    "barrier_width_m_scan": [
+      3.5e-07,
+      2.4e-06,
+      18
+    ],
+    "barrier_floor_T": 5e-05,
+    "minimum_forbidden_margin_fraction": 0.2,
+    "candidate_count_full_spinor": 24,
+    "gate_search_max_s": 1.6e-07,
+    "spatial_modes": 20,
+    "final_reporting_grid_m": 2e-08
+  },
+  "initialization_protocol": {
+    "control_0": "equal-occupation pure -q_BEC logical state selected by the negative phase gradient",
+    "control_1": "equal-occupation pure +q_BEC logical state selected by the positive phase gradient",
+    "preparation": "a phased microstrip array selects -q_BEC or +q_BEC by reversing its phase gradient",
+    "transduction": "a phase-matched receiving array coherently combines one wavevector state and rejects the opposite state; its output drives the local magnetostatic barrier transducer",
+    "field_interpretation": "the calculated state-dependent barrier field is the output of the receiver/transducer transfer model; equal-occupation +/-q states are not assigned different raw static demagnetising fields",
+    "cascade_input": "the preceding stage output is coupled to the same phase-sensitive receiving/transduction line; full inter-stage fan-out is outside the present simulation",
+    "readout": "Brillouin-light-scattering or inductive antenna",
+    "note": "protocol-level specification; antenna engineering is outside this proof-of-principle"
+  },
+  "selected_design": {
+    "geometry_label": "z_120nm",
+    "z_m": 1.2e-07,
+    "control_y_m": -1.8e-07,
+    "control_radius_m": 4.8e-07,
+    "cone": 0.7,
+    "barrier_T": 0.01850629396417204,
+    "width_m": 2.4e-06,
+    "minimum_forbidden_margin": 0.20914621990215898,
+    "K0_WKB_Hz": 839492.3715302973,
+    "K1_WKB_Hz": 1031160.231974567,
+    "deltaK_Hz": 191667.86044426973,
+    "ratio_K1_K0": 1.228313998964495,
+    "conditional_beat_time_s": 1.3043397021311834e-06,
+    "screen_Fabs": 0.16461630679873523,
+    "screen_Fcond": 0.5798489787361076,
+    "screen_survival": 0.2838951396578263,
+    "screen_t_s": 1.336e-07,
+    "K0_extracted_Hz": 839492.3715354261,
+    "K1_extracted_Hz": 1031160.2350587514,
+    "truth": {
+      "minimum_Fabs": 0.164627558748773,
+      "gate_time_s": 1.3364266666666668e-07,
+      "Fabs": [
+        0.16462931689292612,
+        0.16462931689292612,
+        0.164627558748773,
+        0.164627558748773
+      ],
+      "conditional_populations": {
+        "C0_stay": 0.5801280422768549,
+        "C0_flip": 0.4198719577231405,
+        "C1_stay": 0.41987815297843556,
+        "C1_flip": 0.5801218468510045
+      },
+      "basis_capture_min": 0.9999999998294201
+    }
+  },
+  "convergence": [
+    {
+      "dx_m": 4.8e-08,
+      "target_cells": 1222,
+      "spatial_modes": 16,
+      "time_samples": 900,
+      "E0_rad_s": 2491958908.018794,
+      "omega_attempt_rad_s": 1573744235.8931317,
+      "K0_Hz": 859513.1685937913,
+      "K1_Hz": 1060949.9059402298,
+      "minimum_Fabs": 0.17064668948328668,
+      "gate_time_s": 1.301768888888889e-07,
+      "basis_capture": 0.9999999995634073
+    },
+    {
+      "dx_m": 4e-08,
+      "target_cells": 1772,
+      "spatial_modes": 20,
+      "time_samples": 1200,
+      "E0_rad_s": 2471685306.483739,
+      "omega_attempt_rad_s": 1616532749.541346,
+      "K0_Hz": 839492.3715293169,
+      "K1_Hz": 1031160.2350928644,
+      "minimum_Fabs": 0.16462755875678983,
+      "gate_time_s": 1.3364266666666668e-07,
+      "basis_capture": 0.999999999829419
+    },
+    {
+      "dx_m": 3.1999999999999995e-08,
+      "target_cells": 2752,
+      "spatial_modes": 26,
+      "time_samples": 1800,
+      "E0_rad_s": 2534020617.1203938,
+      "omega_attempt_rad_s": 1611975189.0872955,
+      "K0_Hz": 979550.4430952534,
+      "K1_Hz": 1215577.253446653,
+      "minimum_Fabs": 0.19965823294597776,
+      "gate_time_s": 1.1388844444444444e-07,
+      "basis_capture": 0.9999999997832473
+    },
+    {
+      "dx_m": 2.4e-08,
+      "target_cells": 4904,
+      "spatial_modes": 34,
+      "time_samples": 2400,
+      "E0_rad_s": 2535411957.3592815,
+      "omega_attempt_rad_s": 1645491680.4589171,
+      "K0_Hz": 1003506.100441179,
+      "K1_Hz": 1247364.5960100163,
+      "minimum_Fabs": 0.2052586886523579,
+      "gate_time_s": 1.11068e-07,
+      "basis_capture": 0.9999999999532643
+    },
+    {
+      "dx_m": 2e-08,
+      "target_cells": 7048,
+      "spatial_modes": 42,
+      "time_samples": 3000,
+      "E0_rad_s": 2550382834.5405383,
+      "omega_attempt_rad_s": 1653211825.3262506,
+      "K0_Hz": 1048068.6254526544,
+      "K1_Hz": 1306493.7774190654,
+      "minimum_Fabs": 0.2153452267204914,
+      "gate_time_s": 1.061768e-07,
+      "basis_capture": 0.9999999999610564
+    }
+  ],
+  "wavevector_selective_transducer": {
+    "q_BEC_rad_per_m": 5000000.0,
+    "elements": 16,
+    "spacing_m": 3.141592653589793e-07,
+    "power_overlap_control0_control1": [
+      2.967166183520185e-32,
+      1.0
+    ],
+    "conditionality_chain": "+/-q input -> coherent receiver overlap -> equivalent magnetic source -> transduced barrier field -> WKB coupling",
+    "not_modeled_as": "a raw static demagnetising-field difference between equal-occupation +/-q condensates",
+    "equivalent_source_assumption": "the source-sheet footprint follows the declared control-mode aperture; its absolute receiver/transducer transfer requires calibration",
+    "scope": "ideal coherent phased-array overlap followed by one common equivalent-source transfer map; insertion loss, impedance and nonlinear rectification require experimental calibration"
+  },
+  "selected_fidelity_metrics": {
+    "conditional_minimum": 0.5857746800620023,
+    "survival": 0.36762467557952117,
+    "loss_inclusive_absolute_minimum": 0.2153452267204914,
+    "thresholds": {
+      "conditional_proof_of_principle": 0.8,
+      "absolute_informational_only": 0.8
+    }
+  },
+  "reported_grid": {
+    "cell_size_m": 2e-08,
+    "target_cells": 7048,
+    "spatial_modes": 42,
+    "time_samples": 3000
+  },
+  "convergence_relative_errors": {
+    "K_spatial": 0.04525791276699136,
+    "fidelity_spatial": 0.04683892102807256,
+    "fidelity_time_sampling": 0.0
+  },
+  "local_sensitivity": {
+    "parameter_fraction": 0.02,
+    "fixed_nominal_gate_time_s": 1.061768e-07,
+    "worst_fixed_gate_conditional_F": 0.38669366260717986,
+    "cases": [
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 0.98,
+        "cone_factor": 0.98,
+        "K0_Hz": 1337742.4929868672,
+        "K1_Hz": 1660901.6984788827,
+        "fixed_gate_conditional_F": 0.39376793019007084,
+        "fixed_gate_absolute_F": 0.14475880758974433,
+        "recalibrated_absolute_F": 0.26628155409334214,
+        "recalibrated_conditional_F": 0.5842374431105903,
+        "recalibrated_gate_time_s": 8.337101002358477e-08
+      },
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 0.98,
+        "cone_factor": 1.0,
+        "K0_Hz": 1337742.4929868672,
+        "K1_Hz": 1681836.4734683111,
+        "fixed_gate_conditional_F": 0.39376793019007084,
+        "fixed_gate_absolute_F": 0.14475880758974433,
+        "recalibrated_absolute_F": 0.26992885783486426,
+        "recalibrated_conditional_F": 0.5890223139577291,
+        "recalibrated_gate_time_s": 8.279299903742153e-08
+      },
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 0.98,
+        "cone_factor": 1.02,
+        "K0_Hz": 1337742.4929868672,
+        "K1_Hz": 1704295.0465859266,
+        "fixed_gate_conditional_F": 0.39376793019007084,
+        "fixed_gate_absolute_F": 0.14475880758974433,
+        "recalibrated_absolute_F": 0.2738163150452381,
+        "recalibrated_conditional_F": 0.594073076730569,
+        "recalibrated_gate_time_s": 8.218175974907753e-08
+      },
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 1.0,
+        "cone_factor": 0.98,
+        "K0_Hz": 1246953.1888838084,
+        "K1_Hz": 1555639.04186466,
+        "fixed_gate_conditional_F": 0.45358705457309645,
+        "fixed_gate_absolute_F": 0.16674979378450513,
+        "recalibrated_absolute_F": 0.2528327897179972,
+        "recalibrated_conditional_F": 0.5860751683906881,
+        "recalibrated_gate_time_s": 8.920313014585971e-08
+      },
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 1.0,
+        "cone_factor": 1.0,
+        "K0_Hz": 1246953.1888838084,
+        "K1_Hz": 1575724.401190049,
+        "fixed_gate_conditional_F": 0.45358705457309645,
+        "fixed_gate_absolute_F": 0.16674979378450513,
+        "recalibrated_absolute_F": 0.2564740193276183,
+        "recalibrated_conditional_F": 0.5909697003725005,
+        "recalibrated_gate_time_s": 8.856838652873582e-08
+      },
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 1.0,
+        "cone_factor": 1.02,
+        "K0_Hz": 1246953.1888838084,
+        "K1_Hz": 1597283.5352664397,
+        "fixed_gate_conditional_F": 0.45358705457309645,
+        "fixed_gate_absolute_F": 0.16674979378450513,
+        "recalibrated_absolute_F": 0.26035856829462545,
+        "recalibrated_conditional_F": 0.5961366450663955,
+        "recalibrated_gate_time_s": 8.789704380697036e-08
+      },
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 1.02,
+        "cone_factor": 0.98,
+        "K0_Hz": 1162325.5323195928,
+        "K1_Hz": 1457071.691282949,
+        "fixed_gate_conditional_F": 0.5099770010115897,
+        "fixed_gate_absolute_F": 0.1874801295499028,
+        "recalibrated_absolute_F": 0.23914450380110033,
+        "recalibrated_conditional_F": 0.5879170101176344,
+        "recalibrated_gate_time_s": 9.544180401787474e-08
+      },
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 1.02,
+        "cone_factor": 1.0,
+        "K0_Hz": 1162325.5323195928,
+        "K1_Hz": 1476334.746726847,
+        "fixed_gate_conditional_F": 0.5099770010115897,
+        "fixed_gate_absolute_F": 0.1874801295499028,
+        "recalibrated_absolute_F": 0.24276917154030572,
+        "recalibrated_conditional_F": 0.5929215634893631,
+        "recalibrated_gate_time_s": 9.474504786833296e-08
+      },
+      {
+        "barrier_factor": 0.98,
+        "width_factor": 1.02,
+        "cone_factor": 1.02,
+        "K0_Hz": 1162325.5323195928,
+        "K1_Hz": 1497022.6175777202,
+        "fixed_gate_conditional_F": 0.5099770010115897,
+        "fixed_gate_absolute_F": 0.1874801295499028,
+        "recalibrated_absolute_F": 0.24663983536880124,
+        "recalibrated_conditional_F": 0.5982050784224536,
+        "recalibrated_gate_time_s": 9.400799926237127e-08
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 0.98,
+        "cone_factor": 0.98,
+        "K0_Hz": 1128291.4607038295,
+        "K1_Hz": 1383577.6449284512,
+        "fixed_gate_conditional_F": 0.5326594939779858,
+        "fixed_gate_absolute_F": 0.19581877366800896,
+        "recalibrated_absolute_F": 0.22680980770240208,
+        "recalibrated_conditional_F": 0.5794829252111733,
+        "recalibrated_gate_time_s": 9.952747818592659e-08
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 0.98,
+        "cone_factor": 1.0,
+        "K0_Hz": 1128291.4607038295,
+        "K1_Hz": 1399781.9088695871,
+        "fixed_gate_conditional_F": 0.5326594939779858,
+        "fixed_gate_absolute_F": 0.19581877366800896,
+        "recalibrated_absolute_F": 0.2299344613800278,
+        "recalibrated_conditional_F": 0.5839446634096267,
+        "recalibrated_gate_time_s": 9.888953458502744e-08
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 0.98,
+        "cone_factor": 1.02,
+        "K0_Hz": 1128291.4607038295,
+        "K1_Hz": 1417115.3489035298,
+        "fixed_gate_conditional_F": 0.5326594939779858,
+        "fixed_gate_absolute_F": 0.19581877366800896,
+        "recalibrated_absolute_F": 0.2332617994439415,
+        "recalibrated_conditional_F": 0.5886469507746109,
+        "recalibrated_gate_time_s": 9.821612538484958e-08
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 1.0,
+        "cone_factor": 0.98,
+        "K0_Hz": 1048068.6255133465,
+        "K1_Hz": 1291009.6801448658,
+        "fixed_gate_conditional_F": 0.5755803702917105,
+        "fixed_gate_absolute_F": 0.21159754689843074,
+        "recalibrated_absolute_F": 0.21225689067914805,
+        "recalibrated_conditional_F": 0.5812115270057202,
+        "recalibrated_gate_time_s": 1.0687970360917448e-07
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 1.0,
+        "cone_factor": 1.0,
+        "K0_Hz": 1048068.6255133465,
+        "K1_Hz": 1306493.770175734,
+        "fixed_gate_conditional_F": 0.5857746939712063,
+        "fixed_gate_absolute_F": 0.215345231833858,
+        "recalibrated_absolute_F": 0.21534527031309142,
+        "recalibrated_conditional_F": 0.5857750238008682,
+        "recalibrated_gate_time_s": 1.061768407839148e-07
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 1.0,
+        "cone_factor": 1.02,
+        "K0_Hz": 1048068.6255133465,
+        "K1_Hz": 1323065.1054613495,
+        "fixed_gate_conditional_F": 0.5857753094183759,
+        "fixed_gate_absolute_F": 0.21534545808742406,
+        "recalibrated_absolute_F": 0.2186372484324941,
+        "recalibrated_conditional_F": 0.5905849544538817,
+        "recalibrated_gate_time_s": 1.0543479554477406e-07
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 1.02,
+        "cone_factor": 0.98,
+        "K0_Hz": 973549.7272134123,
+        "K1_Hz": 1204652.4685094464,
+        "fixed_gate_conditional_F": 0.5182557841040684,
+        "fixed_gate_absolute_F": 0.1905236144984685,
+        "recalibrated_absolute_F": 0.19762587815274651,
+        "recalibrated_conditional_F": 0.5829439041800875,
+        "recalibrated_gate_time_s": 1.1477354988395543e-07
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 1.02,
+        "cone_factor": 1.0,
+        "K0_Hz": 973549.7272134123,
+        "K1_Hz": 1219442.7094426232,
+        "fixed_gate_conditional_F": 0.5281120019483162,
+        "fixed_gate_absolute_F": 0.19414700338590118,
+        "recalibrated_absolute_F": 0.2006661933880683,
+        "recalibrated_conditional_F": 0.5876094825951764,
+        "recalibrated_gate_time_s": 1.139994797093086e-07
+      },
+      {
+        "barrier_factor": 1.0,
+        "width_factor": 1.02,
+        "cone_factor": 1.02,
+        "K0_Hz": 973549.7272134123,
+        "K1_Hz": 1235279.396615797,
+        "fixed_gate_conditional_F": 0.5386533348564295,
+        "fixed_gate_absolute_F": 0.19802225747642208,
+        "recalibrated_absolute_F": 0.20391037534114012,
+        "recalibrated_conditional_F": 0.592527364923924,
+        "recalibrated_gate_time_s": 1.1318213555417316e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 0.98,
+        "cone_factor": 0.98,
+        "K0_Hz": 958961.077933749,
+        "K1_Hz": 1163642.0832909667,
+        "fixed_gate_conditional_F": 0.49090114774527577,
+        "fixed_gate_absolute_F": 0.1804673751814716,
+        "recalibrated_absolute_F": 0.18963403108442148,
+        "recalibrated_conditional_F": 0.5754460735829815,
+        "recalibrated_gate_time_s": 1.1777990550480412e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 0.98,
+        "cone_factor": 1.0,
+        "K0_Hz": 958961.077933749,
+        "K1_Hz": 1176420.2755604477,
+        "fixed_gate_conditional_F": 0.49942534197203436,
+        "fixed_gate_absolute_F": 0.18360107931866054,
+        "recalibrated_absolute_F": 0.19228960937924097,
+        "recalibrated_conditional_F": 0.5796413242150336,
+        "recalibrated_gate_time_s": 1.1707510697544393e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 0.98,
+        "cone_factor": 1.02,
+        "K0_Hz": 958961.077933749,
+        "K1_Hz": 1190057.9573141334,
+        "fixed_gate_conditional_F": 0.5085230153445625,
+        "fixed_gate_absolute_F": 0.18694560854076464,
+        "recalibrated_absolute_F": 0.1951160989849012,
+        "recalibrated_conditional_F": 0.584057482690559,
+        "recalibrated_gate_time_s": 1.1633214607360821e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 1.0,
+        "cone_factor": 0.98,
+        "K0_Hz": 887826.6323849822,
+        "K1_Hz": 1081920.663776028,
+        "fixed_gate_conditional_F": 0.43655347009027873,
+        "fixed_gate_absolute_F": 0.1604878278150529,
+        "recalibrated_absolute_F": 0.1744771975107912,
+        "recalibrated_conditional_F": 0.5770825371124508,
+        "recalibrated_gate_time_s": 1.2691983266867452e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 1.0,
+        "cone_factor": 1.0,
+        "K0_Hz": 887826.6323849822,
+        "K1_Hz": 1094084.8078617868,
+        "fixed_gate_conditional_F": 0.44461092148119336,
+        "fixed_gate_absolute_F": 0.16344994576863567,
+        "recalibrated_absolute_F": 0.1770696492164314,
+        "recalibrated_conditional_F": 0.5813730725558144,
+        "recalibrated_gate_time_s": 1.2614085165674541e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 1.0,
+        "cone_factor": 1.02,
+        "K0_Hz": 887826.6323849822,
+        "K1_Hz": 1107073.1061669332,
+        "fixed_gate_conditional_F": 0.4532303406846721,
+        "fixed_gate_absolute_F": 0.16661865695699843,
+        "recalibrated_absolute_F": 0.17983192007324197,
+        "recalibrated_conditional_F": 0.5858898696895275,
+        "recalibrated_gate_time_s": 1.253195782298745e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 1.02,
+        "cone_factor": 0.98,
+        "K0_Hz": 821968.8445233383,
+        "K1_Hz": 1005951.5070408601,
+        "fixed_gate_conditional_F": 0.38669366260717986,
+        "fixed_gate_absolute_F": 0.14215813226462132,
+        "recalibrated_absolute_F": 0.15946432125794605,
+        "recalibrated_conditional_F": 0.5787224484954183,
+        "recalibrated_gate_time_s": 1.3676744411504499e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 1.02,
+        "cone_factor": 1.0,
+        "K0_Hz": 821968.8445233383,
+        "K1_Hz": 1017526.6413281921,
+        "fixed_gate_conditional_F": 0.3942280877192439,
+        "fixed_gate_absolute_F": 0.14492797285212206,
+        "recalibrated_absolute_F": 0.16198143614026284,
+        "recalibrated_conditional_F": 0.5831085837090186,
+        "recalibrated_gate_time_s": 1.3590682850355358e-07
+      },
+      {
+        "barrier_factor": 1.02,
+        "width_factor": 1.02,
+        "cone_factor": 1.02,
+        "K0_Hz": 821968.8445233383,
+        "K1_Hz": 1029891.7259512363,
+        "fixed_gate_conditional_F": 0.4023045277748738,
+        "fixed_gate_absolute_F": 0.14789707150741044,
+        "recalibrated_absolute_F": 0.16466653451705832,
+        "recalibrated_conditional_F": 0.5877263502089679,
+        "recalibrated_gate_time_s": 1.3499936317590142e-07
+      }
+    ]
+  },
+  "projected_nonlinear_audit": {
+    "meaning": "sensitivity to assumed self-minus-cross nonlinear chemical shift; not a fitted T or S",
+    "worst_conditional_F": 0.0002564979327919054,
+    "cases": [
+      {
+        "assumed_differential_nonlinear_shift_Hz": 0.0,
+        "C0_stay": 0.5857753094582646,
+        "C1_flip": 0.5857746987318054,
+        "minimum_conditional_F": 0.5857746987318054,
+        "minimum_absolute_F": 0.21534523358397173,
+        "norm_error": 3.885780586188048e-15
+      },
+      {
+        "assumed_differential_nonlinear_shift_Hz": 2000000.0,
+        "C0_stay": 0.6201833071543235,
+        "C1_flip": 0.5505586682662942,
+        "minimum_conditional_F": 0.5505586682662942,
+        "minimum_absolute_F": 0.20239895180888962,
+        "norm_error": 1.9984014443252818e-15
+      },
+      {
+        "assumed_differential_nonlinear_shift_Hz": 5000000.0,
+        "C0_stay": 0.7886222878977655,
+        "C1_flip": 0.3520482191400765,
+        "minimum_conditional_F": 0.3520482191400765,
+        "minimum_absolute_F": 0.1294216123497188,
+        "norm_error": 1.2656542480726785e-14
+      },
+      {
+        "assumed_differential_nonlinear_shift_Hz": 10000000.0,
+        "C0_stay": 0.9999281794259728,
+        "C1_flip": 0.0002564979327919054,
+        "minimum_conditional_F": 0.0002564979327919054,
+        "minimum_absolute_F": 9.429496932944205e-05,
+        "norm_error": 1.9984014443252818e-15
+      },
+      {
+        "assumed_differential_nonlinear_shift_Hz": 20000000.0,
+        "C0_stay": 0.9989309122303031,
+        "C1_flip": 0.0012717856253881374,
+        "minimum_conditional_F": 0.0012717856253881374,
+        "minimum_absolute_F": 0.0004675397779400125,
+        "norm_error": 2.2648549702353193e-14
+      }
+    ]
+  },
+  "transducer_disorder_efficiency_audit": {
+    "mapping": "a_effective=a_nominal*sqrt(power_overlap*efficiency); sensitivity model, not an RF circuit simulation",
+    "preregistered_practical_region": "phase RMS <=5 deg, amplitude RMS <=5%, efficiency >=60%, requiring >=90% sample pass fraction",
+    "practical_region_pass": false,
+    "cases": []
+  },
+  "WKB_model": {
+    "form": "rectangular forbidden barrier",
+    "mode_energy_rad_s": 2550382834.5405383,
+    "attempt_frequency_rad_s": 1653211825.3262506,
+    "formal_positive_action_ceiling_K_over_2pi_Hz": 41876344.73839137,
+    "minimum_attempt_frequency_Hz_for_prescribed_250MHz_benchmark": 1570796326.7948966,
+    "prescribed_250MHz_benchmark_compatible_with_current_confinement": false,
+    "attempt_source": "first scalar-confinement level spacing omega_1-omega_0",
+    "action": "d*sqrt(max(gamma*Bbar-E0,0)/D)",
+    "splitting_definition": "Delta_omega=(omega_attempt/pi)*exp(-S)",
+    "hamiltonian_coupling_definition": "K_omega=Delta_omega/2; K_Hz=K_omega/(2*pi)",
+    "Hamiltonian_convention": "H/hbar=[[omega_L,-K_omega],[-K_omega,omega_R]], hence eigenfrequency splitting is 2*K_omega",
+    "minimum_forbidden_margin_fraction": 0.2,
+    "limitation": "spinor splitting projects the WKB-built field and is not an independent micromagnetic validation"
+  },
+  "WKB_consistency_statement": "The mode energy and attempt prefactor are extracted from the confinement spectrum; the subsequent spinor splitting is a projection/consistency check, not an independent validation. The prescribed 250 MHz benchmark lies above the formal WKB envelope of this confinement and is not attributed to the selected geometry.",
+  "claim_boundary": [
+    "barrier geometry, vertical separation and transducer cone are assumed design inputs",
+    "the two control inputs have equal BEC occupation and differ by wavevector sign",
+    "conditionality comes from coherent wave-vector-selective transduction, not from assigning different raw static fields to +/-q",
+    "the equivalent magnetic source is a reduced transfer representation, not an RF-circuit or full-LLG simulation",
+    "phased-array selectivity is calculated for ideal coherent elements and is not measured insertion efficiency",
+    "the factor-of-two between WKB splitting and Hamiltonian coupling is enforced explicitly",
+    "the WKB calculation uses extracted E0 and confinement level spacing but remains a leading-order rectangular-barrier approximation",
+    "reported K values are spinor projections of the WKB-built field",
+    "nonlinear shifts are a sensitivity audit because T and S were not numerically fixed in the old manuscript",
+    "full time-dependent LLG, fabrication disorder and experimental calibration remain future validation",
+    "PASS is numerical proof-of-principle only"
+  ],
+  "runtime_s": 90.16302633285522
+}

@@ -5,4 +5,7 @@
 #
 #  This file is kept in examples/ for reference.
 #  The canonical single-cell version is at: code/magnon_cnot_single_cell.py
+#
+#  This is a legacy assigned-coupling benchmark. It is not the revised
+#  receiver-mediated calculation or a device-level CNOT simulation.
 # ══════════════════════════════════════════════════════════════════════════════

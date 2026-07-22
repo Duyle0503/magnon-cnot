@@ -7,6 +7,11 @@
 # ║  CELL 1  —  paste toàn bộ file này vào 1 cell Colab / Kaggle           ║
 # ║  Estimated runtime: ~15 min (T4 GPU)                                    ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
+#
+# LEGACY SCOPE: this is the original assigned-coupling benchmark.  It does not
+# extract K from the reported geometry, simulate the receiver/transducer, or
+# demonstrate a physical CNOT.  Use revised_model/spinor2d_run_all.py and the
+# public MuMax3 notebook for the revision evidence.
 
 # ════════════════════════════════════════════════════════════════════════════
 # 0.  IMPORTS + GPU
@@ -75,8 +80,8 @@ mask_B = xp.asarray(z_np > 0).astype(xp.float64)
 # ════════════════════════════════════════════════════════════════════════════
 # 3.  ANALYTICAL THEORY  (Part 1)
 # ════════════════════════════════════════════════════════════════════════════
-def K_WKB(d, dB):
-    """Josephson coupling from WKB tunnelling. d [m], dB [T]."""
+def legacy_K_WKB_proxy(d, dB):
+    """Historical carrier-prefactor proxy; not revised geometry evidence."""
     V0  = 2.0*np.pi*muB_g*dB*hbar
     kap = np.sqrt(np.maximum(V0, 1e-30)/(hbar*D_zz))
     return (omega0/np.pi)*np.exp(-kap*d)
@@ -295,12 +300,12 @@ F_Kd = np.zeros((len(d_sw), len(dB_sw)))
 K_Kd = np.zeros_like(F_Kd)
 for i,d in enumerate(d_sw):
     for j,dB in enumerate(dB_sw):
-        Kv = K_WKB(d*1e-6, dB*1e-3)
+        Kv = legacy_K_WKB_proxy(d*1e-6, dB*1e-3)
         K_Kd[i,j] = Kv
         F_Kd[i,j] = fidelity_4m(min(Kv, 5e9))
 
 idx = np.unravel_index(np.argmin(np.abs(K_Kd - K_star)), K_Kd.shape)
-print(f"  Optimal: d={d_sw[idx[0]]:.2f}µm  dB={dB_sw[idx[1]]:.1f}mT"
+print(f"  Legacy proxy point: d={d_sw[idx[0]]:.2f}µm  dB={dB_sw[idx[1]]:.1f}mT"
       f"  K={K_Kd[idx]/(2*np.pi)/1e6:.1f}MHz  F={F_Kd[idx]:.4f}")
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -375,7 +380,7 @@ F_K_sw   = [ensemble_F(K,N=200,Nt=250)[2] for K in K_ens_sw]
 print("  Sweeps done.")
 
 # ════════════════════════════════════════════════════════════════════════════
-# 9.  UNIVERSALITY  (Part 5)
+# 9.  IDEAL MATRIX-ALGEBRA REFERENCE  (Part 5)
 # ════════════════════════════════════════════════════════════════════════════
 def Rx(t): c=math.cos(t/2);s=math.sin(t/2); return np.array([[c,-1j*s],[-1j*s,c]],complex)
 def Rz(t): return np.diag([np.exp(-1j*t/2), np.exp(1j*t/2)])
@@ -392,9 +397,10 @@ state00  = np.array([1,0,0,0],complex)
 bell     = CNOT_mat@(np.kron(H_mat,I2)@state00)
 bell_tgt = (1/np.sqrt(2))*np.array([1,0,0,1],complex)
 bell_F   = abs(np.vdot(bell_tgt, bell))**2
-print(f"\n── Part 5: Universality ────────────────────────────────────────")
+print(f"\n── Part 5: Ideal algebra reference (not device evidence) ───────")
 print(f"  H overlap = {H_ov:.6f}")
-print(f"  Bell F    = {bell_F:.6f}")
+print(f"  Formal two-bit vector overlap = {bell_F:.6f}")
+print("  Scope: classical affine truth-table algebra; no entanglement/BQP claim")
 
 # ════════════════════════════════════════════════════════════════════════════
 # 10. MATPLOTLIB STYLE
@@ -421,7 +427,7 @@ dB_arr = np.linspace(0.5,50.0,300)*1e-3
 K_arr  = np.logspace(6.5,10,400)
 
 ax=ax1[0,0]
-ax.semilogy(d_arr*1e6, K_WKB(d_arr,5e-3)/(2*np.pi*1e6), color='k',lw=1.5)
+ax.semilogy(d_arr*1e6, legacy_K_WKB_proxy(d_arr,5e-3)/(2*np.pi*1e6), color='k',lw=1.5)
 ax.set_xlabel(r'$d$ (µm)'); ax.set_ylabel(r'$K_{\max}/2\pi$ (MHz)')
 ax.set_title('(a)', loc='left',fontweight='bold')
 ax.text(0.97,0.92,r'$\delta B=5\,$mT',transform=ax.transAxes,
@@ -429,7 +435,7 @@ ax.text(0.97,0.92,r'$\delta B=5\,$mT',transform=ax.transAxes,
 ax.grid(True,which='both',alpha=0.2,ls=':',lw=0.5)
 
 ax=ax1[0,1]
-ax.semilogy(dB_arr*1e3, K_WKB(1e-6,dB_arr)/(2*np.pi*1e6), color='k',lw=1.5)
+ax.semilogy(dB_arr*1e3, legacy_K_WKB_proxy(1e-6,dB_arr)/(2*np.pi*1e6), color='k',lw=1.5)
 ax.set_xlabel(r'$\delta B$ (mT)'); ax.set_ylabel(r'$K_{\max}/2\pi$ (MHz)')
 ax.set_title('(b)', loc='left',fontweight='bold')
 ax.text(0.97,0.92,r'$d=1\,\mu$m',transform=ax.transAxes,ha='right',fontsize=8)
@@ -538,7 +544,7 @@ fig2.savefig('fig2_dynamics.pdf'); fig2.savefig('fig2_dynamics.png',dpi=200)
 print("  ✓ fig2_dynamics")
 
 # ════════════════════════════════════════════════════════════════════════════
-# 13. FIGURE 3 — Phase diagrams + Universality
+# 13. FIGURE 3 — Legacy sweeps + ideal algebra reference
 # ════════════════════════════════════════════════════════════════════════════
 fig3,ax3=plt.subplots(1,3,figsize=(10,3.8))
 fig3.subplots_adjust(wspace=0.40)
@@ -574,7 +580,7 @@ ax.set_title('(b)',loc='left',fontweight='bold')
 ax.legend(fontsize=7,loc='upper right')
 plt.colorbar(im,ax=ax,label='Fidelity $F$',pad=0.02)
 
-# (c) Bell + CNOT inset
+# (c) Formal complex-amplitude reference; not physical entanglement.
 ax=ax3[2]
 amps=np.abs(bell)**2
 ax.bar(range(4),amps,color=[C1,'lightgray','lightgray',C1],
@@ -595,7 +601,7 @@ ax_in.set_xticklabels(labs,fontsize=5.5)
 ax_in.set_yticklabels(labs,fontsize=5.5)
 ax_in.set_title(r'$|U|^2$',fontsize=7)
 
-fig3.suptitle('Parameter sweeps and gate algebra',fontsize=10,fontweight='bold')
+fig3.suptitle('Legacy sweeps and ideal algebra reference',fontsize=10,fontweight='bold')
 fig3.savefig('fig3_sweep.pdf'); fig3.savefig('fig3_sweep.png',dpi=200)
 print("  ✓ fig3_sweep")
 
@@ -679,10 +685,10 @@ summary = f"""
 ║    σ_thermal = {sig_th:.5f}                                  ║
 ║    Analytical bound at K_demo: {F_bound(K_demo):.4f}                   ║
 ║                                                                 ║
-║  Part 5: Universality                                           ║
+║  Part 5: Ideal matrix-algebra reference                         ║
 ║    H overlap = {H_ov:.4f}                                        ║
-║    Bell F    = {bell_F:.4f}                                        ║
-║    Gate set  = {{CNOT, H, S, T}}  →  BQP-complete               ║
+║    Formal two-bit vector overlap = {bell_F:.4f}                     ║
+║    Classical affine reference; no entanglement or BQP claim     ║
 ║                                                                 ║
 ║  Figures: fig1_theory / fig2_dynamics / fig3_sweep / fig4_ensemble  ║
 ║                                                                 ║
@@ -691,6 +697,7 @@ summary = f"""
 ╚══════════════════════════════════════════════════════════════════╝
 """
 print(summary)
+print("BOUNDARY: ideal assigned-coupling benchmark; not a geometry-resolved CNOT result.")
 
 with open('magnon_cnot_summary.txt','w') as f: f.write(summary)
 

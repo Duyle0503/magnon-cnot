@@ -1,4 +1,4 @@
-"""Publication-quality figures (APL format)."""
+"""Figures for the legacy ideal prescribed-coupling benchmark."""
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
 from .constants import Gamma0, kB, T_K
-from .theory import K_WKB, F_bound, tau_gate, K_star, K_demo
+from .theory import legacy_K_WKB_proxy, F_bound, tau_gate, K_star, K_demo
 from .grid import z_um, z_np, to_np
 from .gpe import make_potential, integ
 from .universality import bell, bell_F, CNOT_mat
@@ -33,14 +33,14 @@ def make_fig1(save=True):
     K_arr  = np.logspace(6.5, 10, 400)
 
     ax = ax1[0, 0]
-    ax.semilogy(d_arr * 1e6, K_WKB(d_arr, 5e-3) / (2 * np.pi * 1e6), 'k', lw=1.5)
+    ax.semilogy(d_arr * 1e6, legacy_K_WKB_proxy(d_arr, 5e-3) / (2 * np.pi * 1e6), 'k', lw=1.5)
     ax.set_xlabel(r'$d$ (µm)'); ax.set_ylabel(r'$K_{\max}/2\pi$ (MHz)')
     ax.set_title('(a)', loc='left', fontweight='bold')
     ax.text(0.97, 0.92, r'$\delta B=5\,$mT', transform=ax.transAxes, ha='right', fontsize=8)
     ax.grid(True, which='both', alpha=0.2, ls=':', lw=0.5)
 
     ax = ax1[0, 1]
-    ax.semilogy(dB_arr * 1e3, K_WKB(1e-6, dB_arr) / (2 * np.pi * 1e6), 'k', lw=1.5)
+    ax.semilogy(dB_arr * 1e3, legacy_K_WKB_proxy(1e-6, dB_arr) / (2 * np.pi * 1e6), 'k', lw=1.5)
     ax.set_xlabel(r'$\delta B$ (mT)'); ax.set_ylabel(r'$K_{\max}/2\pi$ (MHz)')
     ax.set_title('(b)', loc='left', fontweight='bold')
     ax.text(0.97, 0.92, r'$d=1\,\mu$m', transform=ax.transAxes, ha='right', fontsize=8)
@@ -67,7 +67,7 @@ def make_fig1(save=True):
     ax.legend(loc='upper center', fontsize=8); ax.set_xlim(-22, 22)
     ax.grid(True, alpha=0.2, ls=':', lw=0.5)
 
-    fig.suptitle('Analytical theory — WKB Josephson coupling and fidelity bound',
+    fig.suptitle('Legacy carrier-prefactor proxy and ideal loss benchmark',
                  fontsize=10, fontweight='bold')
     if save:
         fig.savefig('fig1_theory.pdf'); fig.savefig('fig1_theory.png', dpi=200)
@@ -159,7 +159,7 @@ def make_fig2(sims, tt_F, save=True):
 
 
 def make_fig3(F_KG, K_sw, G_sw, F_Kd, d_sw, dB_sw, K_Kd, idx, save=True):
-    """Figure 3: Phase diagrams + universality."""
+    """Figure 3: Legacy parameter sweeps and ideal matrix-algebra reference."""
     fig, ax3 = plt.subplots(1, 3, figsize=(10, 3.8))
     fig.subplots_adjust(wspace=0.40)
 
@@ -194,7 +194,7 @@ def make_fig3(F_KG, K_sw, G_sw, F_Kd, d_sw, dB_sw, K_Kd, idx, save=True):
     ax.legend(fontsize=7, loc='upper right')
     plt.colorbar(im, ax=ax, label='Fidelity $F$', pad=0.02)
 
-    # (c) Bell + CNOT inset
+    # (c) Formal complex-amplitude reference; not physical entanglement.
     ax = ax3[2]
     amps = np.abs(bell)**2
     ax.bar(range(4), amps, color=[C1, 'lightgray', 'lightgray', C1],
@@ -203,7 +203,7 @@ def make_fig3(F_KG, K_sw, G_sw, F_Kd, d_sw, dB_sw, K_Kd, idx, save=True):
     ax.set_xticklabels([r'$|00\rangle$', r'$|01\rangle$',
                         r'$|10\rangle$', r'$|11\rangle$'])
     ax.set_ylim(0, 0.65); ax.set_ylabel('Probability')
-    ax.set_title(f'(c) Bell state  $F={bell_F:.4f}$',
+    ax.set_title(f'(c) Formal vector overlap  $F={bell_F:.4f}$',
                  loc='left', fontweight='bold', fontsize=9)
     for k2, v in enumerate(amps):
         if v > 0.01: ax.text(k2, v + 0.02, f'{v:.3f}', ha='center', fontsize=8)
@@ -215,7 +215,7 @@ def make_fig3(F_KG, K_sw, G_sw, F_Kd, d_sw, dB_sw, K_Kd, idx, save=True):
     ax_in.set_yticklabels(labs, fontsize=5.5)
     ax_in.set_title(r'$|U|^2$', fontsize=7)
 
-    fig.suptitle('Parameter sweeps and universality', fontsize=10, fontweight='bold')
+    fig.suptitle('Legacy sweeps and ideal algebra reference', fontsize=10, fontweight='bold')
     if save:
         fig.savefig('fig3_sweep.pdf'); fig.savefig('fig3_sweep.png', dpi=200)
     return fig

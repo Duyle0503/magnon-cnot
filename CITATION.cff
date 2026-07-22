@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite the associated manuscript and the
+  MuMax3 reference listed in the README.
+title: >-
+  Code and micromagnetic validation for conditional Josephson coupling toward
+  an analog classical CNOT in a magnon Bose-Einstein condensate
+type: software
+authors:
+  - family-names: Le
+    given-names: Bao-Duy
+    email: 24130012@student.hcmus.edu.vn
+version: 2.0.0
+date-released: 2026-07-22
+license: MIT
+repository-code: https://github.com/Duyle0503/magnon-cnot

@@ -1,11 +1,12 @@
 """
-Convergence test for the magnon-CNOT spatial GPE (Sec. III.B of the paper).
+Convergence test for the legacy ideal prescribed-coupling spatial GPE.
 
 Self-contained: re-implements the second-order split-step Fourier solver with
 *parameterised* grid size Nz and time step dt (the package pins these at import
 time), runs the four truth-table cases at increasing resolution, and reports the
-maximum change in the output populations. Use the printed number to replace the
-\\todo{...} placeholder in main_jpd.tex (Sec. III.B).
+maximum change in the output populations. This checks only the numerical
+discretisation of the assigned-coupling truth-table benchmark; it is not
+geometry-resolved convergence or CNOT device validation.
 
 Run:  python convergence_test.py
 GPU:  uses CuPy automatically if available, else NumPy.
@@ -36,7 +37,7 @@ muB_g   = 1.4e10                      # g*muB/h [Hz/T]
 L_um    = 20.0                        # half-domain marker (wells at +/- L_um/2)
 Lphys   = 2.0 * L_um * 1e-6           # 40 um domain
 
-K_demo  = 2.0 * np.pi * 250e6         # operating coupling [rad/s]
+K_demo  = 2.0 * np.pi * 250e6         # assigned ideal coupling [rad/s]
 TAU_G   = np.pi / (2.0 * K_demo)      # gate time [s]
 
 
@@ -137,6 +138,7 @@ def truth_table(Nz, dt):
 if __name__ == '__main__':
     print(f"Backend: {'CuPy/GPU' if _GPU else 'NumPy/CPU'}")
     print(f"Gate time tau_g = {TAU_G*1e9:.4f} ns,  K/2pi = 250 MHz\n")
+    print("Scope: ideal assigned-coupling benchmark; not geometry-resolved evidence.\n")
 
     grids = [
         ('base   (Nz=256, dt=5.0 ps)', 256, 5.0e-12),
@@ -155,5 +157,4 @@ if __name__ == '__main__':
     fine = results[grids[-1][0]]
     max_abs = max(abs(fine[k] - base[k]) for k in base)
     print(f"\nMax |change| base -> finest:  {max_abs:.2e}")
-    print("Insert this value (or '<1e-3' if it is below 1e-3) into the "
-          "\\todo{...} in Sec. III.B of main_jpd.tex.")
+    print("This value quantifies only benchmark discretisation sensitivity.")

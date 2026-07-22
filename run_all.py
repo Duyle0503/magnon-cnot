@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-magnon-cnot: Classical CNOT gate via conditional Josephson coupling in magnon BEC.
+Ideal prescribed-coupling benchmark for conditional magnon-BEC logic.
+
+This script assigns the on/off coupling and is not geometry-resolved evidence,
+a receiver/transducer simulation, or a demonstrated CNOT device.
 
 Run all simulations and generate publication figures.
 Usage:
@@ -14,11 +17,11 @@ warnings.filterwarnings("ignore")
 np.random.seed(20260519)
 
 from magnon_cnot.constants import Gamma0, kB, T_K, hbar, omega0, sig_th
-from magnon_cnot.theory import K_WKB, F_bound, tau_gate, K_star, K_demo, T_demo
+from magnon_cnot.theory import legacy_K_WKB_proxy, F_bound, tau_gate, K_star, K_demo, T_demo
 from magnon_cnot.grid import GPU, dz
 from magnon_cnot.gpe import run_sim, integ
 from magnon_cnot.reduced_model import fidelity_4m, ensemble_F
-from magnon_cnot.universality import H_ov, bell_F
+from magnon_cnot.universality import H_ov, bell_F, CLASSICAL_LOGIC_SCOPE
 
 if GPU:
     import cupy as cp
@@ -29,7 +32,8 @@ print(f"{'✓  GPU mode (CuPy)' if GPU else '⚠  CPU mode (NumPy)'}")
 print(f"   omega0/2π = {omega0/(2*np.pi)/1e9:.3f} GHz")
 print(f"   Gamma0/2π = {Gamma0/(2*np.pi)/1e6:.3f} MHz")
 print(f"   K*/2π     = {K_star/(2*np.pi)/1e6:.1f} MHz  (F≥0.99 threshold)")
-print(f"   K_demo    = {K_demo/(2*np.pi)/1e6:.1f} MHz   τ_gate = {T_demo:.2f} ns")
+print(f"   K_ideal   = {K_demo/(2*np.pi)/1e6:.1f} MHz   τ_gate = {T_demo:.2f} ns")
+print("   scope     = assigned ideal coupling; not extracted from this geometry")
 
 # ── Part 2: GPE truth table ──────────────────────────────────────────────────
 truth_cases = [
@@ -67,7 +71,7 @@ F_Kd = np.zeros((len(d_sw), len(dB_sw)))
 K_Kd = np.zeros_like(F_Kd)
 for i, d in enumerate(d_sw):
     for j, dB in enumerate(dB_sw):
-        Kv = K_WKB(d * 1e-6, dB * 1e-3)
+        Kv = legacy_K_WKB_proxy(d * 1e-6, dB * 1e-3)
         K_Kd[i, j] = Kv
         F_Kd[i, j] = fidelity_4m(min(Kv, 5e9))
 
@@ -90,10 +94,11 @@ K_ens_sw = np.logspace(7.5, 9.5, 18)
 F_K_sw   = [ensemble_F(K, N=200, Nt=250)[2] for K in K_ens_sw]
 print("  Sweeps done.")
 
-# ── Part 5: Universality ─────────────────────────────────────────────────────
-print(f"\n── Part 5: Universality ────────────────────────────────────────")
+# ── Part 5: Ideal algebra reference ─────────────────────────────────────────
+print(f"\n── Part 5: Ideal algebra reference (not device evidence) ───────")
 print(f"  H overlap = {H_ov:.6f}")
-print(f"  Bell F    = {bell_F:.6f}")
+print(f"  Formal two-bit vector overlap = {bell_F:.6f}")
+print(f"  Scope: {CLASSICAL_LOGIC_SCOPE}")
 
 # ── Generate figures ──────────────────────────────────────────────────────────
 print("\n── Generating figures ───────────────────────────────────────────")
@@ -108,7 +113,7 @@ make_fig4(F_ens, F_err, F_ens_mean, F_ens_std,
 # ── Summary ───────────────────────────────────────────────────────────────────
 summary = f"""
 ╔══════════════════════════════════════════════════════════════════╗
-║  magnon-BEC CNOT  —  Publication summary                        ║
+║  Assigned-coupling ideal benchmark summary                      ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║  K*/2π  = {K_star/(2*np.pi)/1e6:6.1f} MHz   (F≥0.99 threshold)            ║
 ║  τ_gate = {tau_gate(K_demo)*1e9:6.2f} ns    at K/2π={K_demo/(2*np.pi)/1e6:.0f} MHz           ║
@@ -117,13 +122,14 @@ summary = f"""
 ║  Ensemble (500 traj, 300K): F_avg = {F_ens_mean:.4f} ± {F_ens_std:.4f}         ║
 ║  Analytical bound at K_demo:        {F_bound(K_demo):.4f}                ║
 ║                                                                 ║
-║  Universality: H={H_ov:.4f}  Bell={bell_F:.4f}                     ║
-║  Gate set = {{CNOT, H, S, T}} → BQP-complete                     ║
+║  Formal H overlap={H_ov:.4f}; two-bit vector overlap={bell_F:.4f}      ║
+║  Classical affine-logic reference; no entanglement/BQP claim    ║
 ║                                                                 ║
 ║  LaTeX:  \\bar{{F}} = {F_ens_mean:.4f}  (T=300K)                        ║
 ╚══════════════════════════════════════════════════════════════════╝
 """
 print(summary)
+print("BOUNDARY: This output is an ideal assigned-coupling benchmark, not a geometry-resolved CNOT result.")
 
 with open('magnon_cnot_summary.txt', 'w') as f:
     f.write(summary)
