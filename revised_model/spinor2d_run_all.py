@@ -514,10 +514,14 @@ for yy in np.linspace(-.47,.01,5): ax.plot([1.82,2.05],[yy,yy],color=ORANGE,lw=1
 schematic_callout(ax,r"prepare $B_\pm$",(-2.02,.72),(-1.72,1.43),BLUE)
 schematic_callout(ax,r"prepare $A_\pm$"+"\n/ cascade input",(-.89,-.25),(-1.46,-.93),"#6a3d9a")
 schematic_callout(ax,"A-selective\nreceiver",(1.94,-.23),(1.47,-.96),ORANGE)
-# The receiver feeds one local barrier-drive line next to target B.
-ax.plot([2.05,2.22,2.22,.70],[-.23,-.23,1.26,1.26],color=ORANGE,lw=1.05,clip_on=False)
-ax.add_patch(Rectangle((.60,1.19),.44,.14,fc="#fee8c8",ec=ORANGE,lw=.8,zorder=4))
-schematic_callout(ax,"barrier\ndrive",(.82,1.26),(1.42,1.53),ORANGE)
+# The solid hardware symbol is outside target B. The dashed zone is the
+# calculated field/potential profile, not a separately meshed material body.
+ax.plot([2.05,2.22,2.22,2.05],[-.23,-.23,.47,.47],color=ORANGE,lw=1.05,clip_on=False)
+ax.add_patch(Rectangle((1.55,.39),.50,.16,fc="#fee8c8",ec=ORANGE,lw=.8,zorder=4))
+schematic_callout(ax,"schematic\ntransducer",(1.80,.47),(1.72,.93),ORANGE)
+ax.add_patch(Rectangle((-.45,.10),.90,.14,fc="#fee8c8",ec=ORANGE,lw=.9,ls="--",alpha=.72,zorder=4))
+ax.annotate("",xy=(.45,.17),xytext=(1.55,.47),arrowprops=dict(arrowstyle="->",lw=.85,ls="--",color=ORANGE))
+schematic_callout(ax,r"calculated $\delta B$"+"\nbarrier zone",(.00,.17),(.70,.55),ORANGE)
 schematic_callout(ax,"read B",(.02,1.23),(-.50,1.57),GREEN)
 ax.set(xlabel=r"$x$ ($\mu$m)",ylabel=r"$y$ ($\mu$m)",xlim=(-2.38,2.38),ylim=(-1.10,1.73),aspect="equal"); ax.set_title("Layered device and schematic interfaces",pad=7)
 
@@ -534,7 +538,7 @@ ax.set_title("Reduced-model cross-section",pad=7)
 
 ax=fig.add_subplot(gs[1,:]); panel(ax,"(c)"); ax.set(xlim=(0,1),ylim=(0,1)); ax.axis("off")
 xs=[.08,.285,.50,.715,.92]
-labels=["pump\nA and B",r"prepare $A_\pm,B_\pm$"+"\n(or cascade input)",r"A receiver $\rightarrow$"+"\nbarrier drive",r"interact for $\tau_g$","read B\n(audit A)"]
+labels=["pump\nA and B",r"prepare $A_\pm,B_\pm$"+"\n(or cascade input)",r"A receiver $\rightarrow$"+"\n"+r"transducer $\rightarrow\delta B$",r"interact for $\tau_g$","read B\n(audit A)"]
 colors=[GREY,BLUE,ORANGE,ORANGE,GREEN]
 for j,(xx,txt,col) in enumerate(zip(xs,labels,colors)):
  ax.scatter(xx,.68,s=40,color=col,zorder=3); ax.text(xx,.34,txt,va="center",ha="center",fontsize=6.8); ax.text(xx,.68,str(j+1),va="center",ha="center",fontsize=6.0,color="white",weight="bold",zorder=4)
@@ -569,9 +573,9 @@ savefig(fig,"fig2_physical_origin")
 t=np.linspace(0,160e-9,2400); k0=fine["K0_Hz"]; k1=fine["K1_Hz"]
 c0=np.cos(2*np.pi*k0*t)**2; c1=np.sin(2*np.pi*k1*t)**2; sv=np.exp(-2*ALPHA*OMEGA_BEC*t); tg=fine["gate_time_s"]
 fig,axs=plt.subplots(2,2,figsize=(7.05,4.55),constrained_layout=True)
-ax=axs[0,0]; panel(ax,"(a)"); ax.plot(t*1e9,c0,color=BLUE); ax.plot(t*1e9,c1,color=ORANGE); ax.axvline(tg*1e9,color=GREY,ls="--",lw=.9); ax.set(xlabel="time (ns)",ylabel="conditional population",ylim=(0,1.03),title="Common-time logical dynamics"); ax.text(8,.94,r"$C=0$: stay",color=BLUE,fontsize=7.2); ax.text(129,.82,r"$C=1$: flip",color=ORANGE,fontsize=7.2,ha="center"); ax.text(tg*1e9+3,.08,r"$t_g$",color=GREY,fontsize=7.2)
+ax=axs[0,0]; panel(ax,"(a)"); ax.plot(t*1e9,c0,color=BLUE,label=r"$C=0$: stay"); ax.plot(t*1e9,c1,color=ORANGE,label=r"$C=1$: flip"); ax.axvline(tg*1e9,color=GREY,ls="--",lw=.9); ax.set(xlabel="time (ns)",ylabel="conditional population",ylim=(0,1.16),title="Common-time logical dynamics"); ax.legend(loc="upper center",ncol=2,frameon=True,framealpha=1,facecolor="white",edgecolor="none",fontsize=7.2); ax.text(tg*1e9+3,.08,r"$t_g$",color=GREY,fontsize=7.2)
 ax=axs[0,1]; panel(ax,"(b)"); ax.plot(t*1e9,sv,color=GREEN); score_t=sv*np.minimum(c0,c1); ax.plot(t*1e9,score_t,color=RED); ax.axvline(tg*1e9,color=GREY,ls="--",lw=.9); ax.scatter([tg*1e9],[fine["minimum_Fabs"]],s=22,color=RED,zorder=3); ax.set(xlabel="time (ns)",ylabel="probability",ylim=(0,1.03),title="Damping and loss-inclusive score"); ax.text(126,sv[np.argmin(abs(t-126e-9))]+.04,r"$P_{\mathrm{surv}}$",color=GREEN,fontsize=7.2); ax.text(127,score_t[np.argmin(abs(t-127e-9))]-.08,r"$F_{\mathrm{abs}}^{\mathrm{min}}$",color=RED,fontsize=7.2)
-ax=axs[1,0]; panel(ax,"(c)"); dxx=np.array([q["dx_m"] for q in conv])*1e9; kc0=np.array([q["K0_Hz"] for q in conv])/1e6; kc1=np.array([q["K1_Hz"] for q in conv])/1e6; ax.plot(dxx,kc0,"o-",color=BLUE); ax.plot(dxx,kc1,"s-",color=ORANGE); ax.invert_xaxis(); ax.set(xlabel="cell size (nm)",ylabel=r"$K/(2\pi)$ (MHz)",title="Spatial convergence of coupling"); ax.text(dxx[-1]+1.2,kc0[-1]-.015,r"$K_0$",color=BLUE,ha="right",va="top",fontsize=7.2); ax.text(dxx[-1]+1.2,kc1[-1]+.010,r"$K_1$",color=ORANGE,ha="right",va="bottom",fontsize=7.2)
+ax=axs[1,0]; panel(ax,"(c)"); dxx=np.array([q["dx_m"] for q in conv])*1e9; kc0=np.array([q["K0_Hz"] for q in conv])/1e6; kc1=np.array([q["K1_Hz"] for q in conv])/1e6; ax.plot(dxx,kc0,"o-",color=BLUE,label=r"$K_0$"); ax.plot(dxx,kc1,"s-",color=ORANGE,label=r"$K_1$"); ax.invert_xaxis(); krange=max(np.max(kc1)-np.min(kc0),1e-6); ax.set(xlabel="cell size (nm)",ylabel=r"$K/(2\pi)$ (MHz)",ylim=(np.min(kc0)-.06*krange,np.max(kc1)+.26*krange),title="Spatial convergence of coupling"); ax.legend(loc="upper center",ncol=2,frameon=False,fontsize=7.2)
 ax=axs[1,1]; panel(ax,"(d)"); fa=np.array([q["minimum_Fabs"] for q in conv]); sc=np.exp(-2*ALPHA*OMEGA_BEC*np.array([q["gate_time_s"] for q in conv])); fc=fa/sc; ax.plot(dxx,fc,"o-",color=GREEN); ax.plot(dxx,fa,"s-",color=RED); ax.invert_xaxis(); ax.set(xlabel="cell size (nm)",ylabel="fidelity",ylim=(0,1),title="Spatial convergence of metrics"); ax.text(dxx[-1]+1.2,fc[-1]+.025,r"$F_{\mathrm{cond}}^{\mathrm{min}}$",color=GREEN,ha="right",va="bottom",fontsize=7.2); ax.text(dxx[-1]+1.2,fa[-1]-.035,r"$F_{\mathrm{abs}}^{\mathrm{min}}$",color=RED,ha="right",va="top",fontsize=7.2); summary=(rf"{dxx[-1]:.0f} nm: $F_{{\mathrm{{cond}}}}={fine_conditional:.3f}$"+", "+rf"$P_{{\mathrm{{surv}}}}={fine_survival:.3f}$"+", "+rf"$F_{{\mathrm{{abs}}}}={fine['minimum_Fabs']:.3f}$"); ax.text(.50,.93,summary,transform=ax.transAxes,fontsize=6.8,ha="center",va="top")
 savefig(fig,"fig3_dynamics_validation")
 
