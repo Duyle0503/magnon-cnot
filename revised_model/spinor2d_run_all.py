@@ -496,46 +496,50 @@ def schematic_callout(ax,text,xy,xytext,color,ha="center",va="center"):
  ax.annotate(text,xy=xy,xytext=xytext,arrowprops=dict(arrowstyle="-",lw=.65,color=color),
              ha=ha,va=va,fontsize=6.2,color=color,
              bbox=dict(boxstyle="round,pad=.12",fc="white",ec="none",alpha=.92),annotation_clip=False)
-fig=plt.figure(figsize=(7.08,3.12)); gs=fig.add_gridspec(1,3,width_ratios=(1.76,.96,.90),wspace=.46,left=.070,right=.988,bottom=.15,top=.86)
-ax=fig.add_subplot(gs[0]); panel(ax,"(a)")
+fig=plt.figure(figsize=(7.08,4.35)); gs=fig.add_gridspec(2,2,width_ratios=(2.28,1.00),height_ratios=(2.55,1.00),wspace=.30,hspace=.48,left=.072,right=.985,bottom=.075,top=.925)
+ax=fig.add_subplot(gs[0,0]); panel(ax,"(a)")
 ax.add_patch(Ellipse((0,CFG["target_centre_y_m"]*1e6),2*CFG["target_radius_x_m"]*1e6,2*CFG["target_radius_y_m"]*1e6,fc="#d7ebf4",ec=BLUE,lw=1.15,zorder=1))
 ax.add_patch(Ellipse((0,best["control_y_m"]*1e6),2*best["control_radius_m"]*1e6,2*best["control_radius_m"]*1e6,fc="none",ec=RED,lw=1.15,ls="--",zorder=3))
-ax.text(-.28,.92,r"target B ($\pm q_0$)",ha="center",va="center",color=BLUE,fontsize=6.8)
-schematic_callout(ax,"control A",(-.30,-.13),(-1.28,-1.02),RED)
-# Pump strip over the control region.
-ax.plot([-1.10,1.10],[-.53,-.53],color=GREY,lw=3.0,solid_capstyle="butt",zorder=2)
-ax.text(0,-.67,"pump line",ha="center",va="top",fontsize=6.4,color=GREY)
-# Phase-gradient preparation array at the left and matched receiver at the right.
-for yy in np.linspace(-.42,.30,6):
- ax.plot([-2.08,-1.88],[yy,yy],color=BLUE,lw=1.25,solid_capstyle="butt")
- ax.plot([1.88,2.08],[yy,yy],color=ORANGE,lw=1.25,solid_capstyle="butt")
-schematic_callout(ax,"phase-gradient\narray",(-1.98,-.05),(-1.55,.58),BLUE)
-schematic_callout(ax,"matched\nreceiver",(1.98,-.05),(1.48,-1.13),ORANGE)
-# The receiver feeds one local barrier-transducer line next to the target.
-ax.plot([2.08,2.22,2.22,.70],[.18,.18,1.24,1.24],color=ORANGE,lw=1.05,clip_on=False)
-ax.add_patch(Rectangle((.60,1.17),.44,.14,fc="#fee8c8",ec=ORANGE,lw=.8,zorder=4))
-schematic_callout(ax,"barrier\ntransducer",(.82,1.24),(1.45,1.53),ORANGE)
-# Cascaded phase-resolved input uses the same preparation/receiver interface.
-schematic_callout(ax,"cascade\ninput",(-2.06,.25),(-1.78,1.44),"#6a3d9a")
-# Readout ports are schematic and do not imply simulated optical/RF efficiency.
-schematic_callout(ax,"BLS / inductive\nreadout",(.15,1.17),(-.46,1.55),GREEN)
-ax.set(xlabel=r"$x$ ($\mu$m)",ylabel=r"$y$ ($\mu$m)",xlim=(-2.35,2.35),ylim=(-1.48,1.82),aspect="equal"); ax.set_title("Device and control lines",pad=7)
+ax.text(-.28,.74,r"target B ($B_\pm$)",ha="center",va="center",color=BLUE,fontsize=6.8)
+ax.text(0,-.18,r"control A ($A_\pm$)",ha="center",va="center",color=RED,fontsize=6.7,zorder=5)
+# Separate schematic pump ports establish both condensates. A common resonator
+# covering both regions would be an equivalent hardware implementation.
+ax.plot([-.86,.86],[1.08,1.08],color=GREY,lw=2.7,solid_capstyle="butt",zorder=2); ax.text(.96,1.08,"pump B",ha="left",va="center",fontsize=6.2,color=GREY)
+ax.plot([-.34,.34],[-.43,-.43],color=GREY,lw=2.7,solid_capstyle="butt",zorder=4); ax.text(.43,-.43,"pump A",ha="left",va="center",fontsize=6.2,color=GREY)
+# Independent preparation ports establish all four input pairs. Only the
+# control-side array is connected to the wave-vector-selective receiver.
+for yy in np.linspace(.46,.98,5): ax.plot([-2.14,-1.91],[yy,yy],color=BLUE,lw=1.25,solid_capstyle="butt")
+for yy in np.linspace(-.48,.02,5): ax.plot([-1.00,-.78],[yy,yy],color=RED,lw=1.25,solid_capstyle="butt")
+for yy in np.linspace(-.47,.01,5): ax.plot([1.82,2.05],[yy,yy],color=ORANGE,lw=1.25,solid_capstyle="butt")
+schematic_callout(ax,r"prepare $B_\pm$",(-2.02,.72),(-1.72,1.43),BLUE)
+schematic_callout(ax,r"prepare $A_\pm$"+"\n/ cascade input",(-.89,-.25),(-1.46,-.93),"#6a3d9a")
+schematic_callout(ax,"A-selective\nreceiver",(1.94,-.23),(1.47,-.96),ORANGE)
+# The receiver feeds one local barrier-drive line next to target B.
+ax.plot([2.05,2.22,2.22,.70],[-.23,-.23,1.26,1.26],color=ORANGE,lw=1.05,clip_on=False)
+ax.add_patch(Rectangle((.60,1.19),.44,.14,fc="#fee8c8",ec=ORANGE,lw=.8,zorder=4))
+schematic_callout(ax,"barrier\ndrive",(.82,1.26),(1.42,1.53),ORANGE)
+schematic_callout(ax,"read B",(.02,1.23),(-.50,1.57),GREEN)
+ax.set(xlabel=r"$x$ ($\mu$m)",ylabel=r"$y$ ($\mu$m)",xlim=(-2.38,2.38),ylim=(-1.10,1.73),aspect="equal"); ax.set_title("Layered device and schematic interfaces",pad=7)
 
-ax=fig.add_subplot(gs[1]); panel(ax,"(b)"); ax.set(xlim=(0,1),ylim=(0,1)); ax.axis("off")
-ax.add_patch(Rectangle((.14,.68),.62,.10,fc="#d7ebf4",ec=BLUE,lw=1.0)); ax.add_patch(Rectangle((.27,.24),.36,.10,fc="#fde0d2",ec=RED,lw=1.0))
-ax.text(.45,.83,"target layer",ha="center",color=BLUE); ax.text(.45,.14,"control layer",ha="center",color=RED)
-ax.text(.80,.73,f'{CFG["film_thickness_m"]*1e9:.0f} nm',va="center",fontsize=7.0); ax.text(.67,.29,f'{CFG["film_thickness_m"]*1e9:.0f} nm',va="center",fontsize=7.0)
-ax.annotate("",xy=(.89,.68),xytext=(.89,.34),arrowprops=dict(arrowstyle="<->",lw=.85,color=GREY)); ax.text(.94,.51,f'{best["z_m"]*1e9:.0f} nm',rotation=90,ha="center",va="center",fontsize=7.0)
-for xx in (.37,.45,.53): ax.add_patch(FancyArrowPatch((xx,.36),(xx,.66),connectionstyle="arc3,rad=.18",arrowstyle="->",mutation_scale=7,color=".35",lw=.65))
-ax.set_title("Layer separation",pad=7)
+ax=fig.add_subplot(gs[0,1]); panel(ax,"(b)"); ax.set(xlim=(0,1),ylim=(0,1)); ax.axis("off")
+ax.add_patch(Rectangle((.10,.69),.60,.12,fc="#d7ebf4",ec=BLUE,lw=1.0)); ax.add_patch(Rectangle((.22,.22),.36,.12,fc="#fde0d2",ec=RED,lw=1.0))
+ax.plot([.08,.72],[.75,.75],color=BLUE,lw=.7,ls="--"); ax.plot([.20,.60],[.28,.28],color=RED,lw=.7,ls="--")
+ax.text(.40,.86,"target B",ha="center",color=BLUE); ax.text(.40,.13,"control A",ha="center",color=RED)
+ax.annotate("",xy=(.76,.81),xytext=(.76,.69),arrowprops=dict(arrowstyle="<->",lw=.8,color=BLUE)); ax.text(.80,.75,f'{CFG["film_thickness_m"]*1e9:.0f} nm',va="center",fontsize=6.8)
+ax.annotate("",xy=(.64,.34),xytext=(.64,.22),arrowprops=dict(arrowstyle="<->",lw=.8,color=RED)); ax.text(.68,.28,f'{CFG["film_thickness_m"]*1e9:.0f} nm',va="center",fontsize=6.8)
+ax.annotate("",xy=(.89,.75),xytext=(.89,.28),arrowprops=dict(arrowstyle="<->",lw=.85,color=GREY)); ax.text(.94,.515,rf'$z_{{\rm sep}}={best["z_m"]*1e9:.0f}$ nm',rotation=90,ha="center",va="center",fontsize=6.8)
+for xx in (.33,.40,.47): ax.add_patch(FancyArrowPatch((xx,.36),(xx,.67),connectionstyle="arc3,rad=.18",arrowstyle="->",mutation_scale=7,color=".35",lw=.65))
+ax.text(.04,.02,"thickness-averaged planes; not to scale",fontsize=5.8,color=GREY)
+ax.set_title("Reduced-model cross-section",pad=7)
 
-ax=fig.add_subplot(gs[2]); panel(ax,"(c)"); ax.set(xlim=(0,1),ylim=(0,1)); ax.axis("off")
-ys=[.88,.67,.43,.18]; labels=["parametric pump",r"prepare $\pm q_0$"+"\nor cascade input","common interval", "BLS / inductive\nreadout"]
-colors=[".30",BLUE,ORANGE,GREEN]
-for j,(yy,txt,col) in enumerate(zip(ys,labels,colors)):
- ax.scatter(.17,yy,s=32,color=col,zorder=3); ax.text(.30,yy,txt,va="center",ha="left",fontsize=7.0)
- if j<len(ys)-1: ax.annotate("",xy=(.17,ys[j+1]+.04),xytext=(.17,yy-.04),arrowprops=dict(arrowstyle="->",lw=.8,color=".45"))
-ax.set_title("Operation sequence",pad=7)
+ax=fig.add_subplot(gs[1,:]); panel(ax,"(c)"); ax.set(xlim=(0,1),ylim=(0,1)); ax.axis("off")
+xs=[.08,.285,.50,.715,.92]
+labels=["pump\nA and B",r"prepare $A_\pm,B_\pm$"+"\n(or cascade input)",r"A receiver $\rightarrow$"+"\nbarrier drive",r"interact for $\tau_g$","read B\n(audit A)"]
+colors=[GREY,BLUE,ORANGE,ORANGE,GREEN]
+for j,(xx,txt,col) in enumerate(zip(xs,labels,colors)):
+ ax.scatter(xx,.68,s=40,color=col,zorder=3); ax.text(xx,.34,txt,va="center",ha="center",fontsize=6.8); ax.text(xx,.68,str(j+1),va="center",ha="center",fontsize=6.0,color="white",weight="bold",zorder=4)
+ if j<len(xs)-1: ax.annotate("",xy=(xs[j+1]-.035,.68),xytext=(xx+.035,.68),arrowprops=dict(arrowstyle="->",lw=.8,color=".45"))
+ax.set_title("Protocol for the four logical input pairs",pad=3)
 savefig(fig,"fig1_device_protocol")
 
 # Reconstruct finest-grid arrays from the actual selected calculation.
