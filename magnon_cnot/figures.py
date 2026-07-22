@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
 from .constants import Gamma0, kB, T_K
-from .theory import legacy_K_WKB_proxy, F_bound, tau_gate, K_star, K_demo
+from .theory import legacy_K_WKB_proxy, F_loss_exact, tau_gate, K_star, K_demo
 from .grid import z_um, z_np, to_np
 from .gpe import make_potential, integ
 from .universality import bell, bell_F, CNOT_mat
@@ -47,12 +47,12 @@ def make_fig1(save=True):
     ax.grid(True, which='both', alpha=0.2, ls=':', lw=0.5)
 
     ax = ax1[1, 0]
-    ax.semilogx(K_arr / (2 * np.pi * 1e6), F_bound(K_arr), 'k', lw=1.5,
-                label=r'$F_{\max}=1-\pi\Gamma/K$')
+    ax.semilogx(K_arr / (2 * np.pi * 1e6), F_loss_exact(K_arr), 'k', lw=1.5,
+                label=r'$F_{\rm loss}=e^{-\pi\Gamma/K}$')
     ax.axhline(0.99, color='red', ls='--', lw=1.0, label='$F=0.99$')
     ax.axvline(K_star / (2 * np.pi * 1e6), color=C3, ls=':', lw=1.0,
                label=f'$K^*={K_star/(2*np.pi*1e6):.0f}$ MHz')
-    ax.set_xlabel(r'$K_{\max}/2\pi$ (MHz)'); ax.set_ylabel(r'$F_{\max}$')
+    ax.set_xlabel(r'$K_{\max}/2\pi$ (MHz)'); ax.set_ylabel(r'$F_{\rm loss}$')
     ax.set_title('(c)', loc='left', fontweight='bold'); ax.set_ylim(0.60, 1.02)
     ax.legend(loc='lower right', fontsize=7.5)
     ax.grid(True, which='both', alpha=0.2, ls=':', lw=0.5)
@@ -102,14 +102,14 @@ def make_fig2(sims, tt_F, save=True):
     # (e) density map
     ax_d = fig.add_subplot(gs[1, :])
     sf = sims[('1', '0')]
-    dens = sf['N_Bp'] + sf['N_Bm'] + sf['N_Ap'] + sf['N_Am']
+    dens = sf['N_Bp'] + sf['N_Bm']
     ext = [sf['t_ns'][0], sf['t_ns'][-1], sf['z_um'][0], sf['z_um'][-1]]
     im = ax_d.imshow(dens.T, origin='lower', aspect='auto', extent=ext, cmap='magma')
-    plt.colorbar(im, ax=ax_d, label=r'$\sum|\psi|^2$', pad=0.01, fraction=0.018)
+    plt.colorbar(im, ax=ax_d, label=r'$\sum_\pm|\psi_{B\pm}|^2$', pad=0.01, fraction=0.018)
     ax_d.axhline(0.5, color='cyan', ls='--', lw=0.8, alpha=0.8)
     ax_d.axhline(-0.5, color='cyan', ls='--', lw=0.8, alpha=0.8)
     ax_d.set_xlabel('$t$ (ns)'); ax_d.set_ylabel(r'$z$ (µm)')
-    ax_d.set_title(r'(e)  $|\psi(z,t)|^2$ — case $|10\rangle\!\to\!|11\rangle$',
+    ax_d.set_title(r'(e)  target $\sum_\pm|\psi_{B\pm}(z,t)|^2$ — $|10\rangle\!\to\!|11\rangle$',
                    loc='left', fontweight='bold', fontsize=9)
 
     # (f) Bloch sphere
@@ -229,7 +229,8 @@ def make_fig4(F_ens, F_err, F_ens_mean, F_ens_std,
     fig.subplots_adjust(wspace=0.38)
 
     ax = ax4[0]
-    ax.plot(noise_sw, F_n_sw, 'ko-', ms=5, lw=1.5)
+    ax.plot(noise_sw, F_n_sw, 'ko-', ms=5, lw=1.5,
+            label='Ensemble (N=300/input)')
     ax.axvline(sig_th, color='red', ls='--', lw=1.0,
                label=f'300 K noise\n$\\sigma_{{th}}={sig_th:.4f}$')
     ax.axhline(0.99, color=C3, ls=':', lw=1.0, label='$F=0.99$')
@@ -242,8 +243,8 @@ def make_fig4(F_ens, F_err, F_ens_mean, F_ens_std,
     ax.semilogx(K_ens_sw / (2 * np.pi * 1e6), F_K_sw, 'ko-', ms=4, lw=1.5,
                 label='Ensemble (N=200)')
     Ka = np.logspace(7.5, 9.5, 200)
-    ax.semilogx(Ka / (2 * np.pi * 1e6), F_bound(Ka), 'b--', lw=1.2,
-                label=r'$1-\pi\Gamma/K$')
+    ax.semilogx(Ka / (2 * np.pi * 1e6), F_loss_exact(Ka), 'b--', lw=1.2,
+                label=r'$F_{\rm loss}=e^{-\pi\Gamma/K}$')
     ax.axvline(K_demo / (2 * np.pi * 1e6), color='red', ls='--', lw=1.0, label='Op. pt.')
     ax.axhline(0.99, color=C3, ls=':', lw=1.0)
     ax.set_xlabel(r'$K_{\max}/2\pi$ (MHz)'); ax.set_ylabel('Fidelity $F$')
@@ -259,13 +260,13 @@ def make_fig4(F_ens, F_err, F_ens_mean, F_ens_std,
                         r'$|10\rangle$', r'$|11\rangle$'])
     ax.axhline(0.99, color='red', ls='--', lw=1.0, label='$F=0.99$')
     ax.set_ylim(0.80, 1.06); ax.set_ylabel('Fidelity $F$')
-    ax.set_title(f'(c) $\\bar{{F}}={F_ens_mean:.4f}\\pm{F_ens_std:.4f}$',
+    ax.set_title(f'(c) N=500/input, $\\bar{{F}}={F_ens_mean:.4f}$ (SEM $\\leq{F_ens_std:.4f}$)',
                  loc='left', fontweight='bold', fontsize=9)
     for k2, (f, e) in enumerate(zip(F_ens, F_err)):
         ax.text(k2, f + e + 0.004, f'{f:.3f}', ha='center', fontsize=7.5)
     ax.legend(fontsize=8); ax.grid(True, axis='y', alpha=0.2, ls=':', lw=0.5)
 
-    fig.suptitle('Ensemble fidelity — 500 trajectories, $T=300\\,$K, no renormalisation',
+    fig.suptitle('Ideal prescribed-coupling ensemble — $T=300\\,$K, no renormalisation',
                  fontsize=10, fontweight='bold')
     if save:
         fig.savefig('fig4_ensemble.pdf'); fig.savefig('fig4_ensemble.png', dpi=200)

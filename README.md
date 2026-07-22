@@ -16,13 +16,16 @@ is intentionally separated into three levels:
    coupling is assigned. The point `K/2π = 250 MHz` and the corresponding
    `F = 0.9906` ensemble result are design-envelope benchmarks, not parameters
    extracted from the reported geometry.
-2. **Reduced receiver-mediated model.** A geometry-resolved two-dimensional
+2. **Reduced receiver-mediated transfer model.** A geometry-resolved two-dimensional
    magnetostatic–spinor-GPE pipeline represents the wave-vector-selective
-   receiver/transducer by an equivalent magnetic source. At the reported
+   receiver/transducer by an equivalent magnetic source. The spatial
+   double-well WKB expression is used as a declared ansatz for the logical
+   off-diagonal term; the microscopic `<+q0|H|-q0>` matrix element is not
+   derived. At the reported
    20 nm grid it gives `K0/2π = 1.048 MHz`, `K1/2π = 1.306 MHz`, a 24.7%
    modulation, `Fcond,min = 0.586`, and `Fabs,min = 0.215`. This is not a
    high-fidelity CNOT result.
-3. **Three-dimensional LLG validation.** Time-dependent MuMax3 calculations
+3. **Three-dimensional LLG subsystem audits.** Time-dependent MuMax3 calculations
    test weak-drive linearity, explicit field-defined double-well mode identity,
    combined-device equilibrium, mesh sensitivity, and the raw direct-dipolar
    `+q0/-q0` null control.
@@ -35,11 +38,17 @@ is intentionally separated into three levels:
 - The MuMax3 barrier is a prescribed longitudinal Zeeman-field region.
 - The calibrated wave-vector-selective receiver/transducer is not included in
   the present three-dimensional LLG geometry.
+- The LLG even/odd spatial-mode audit does not validate the momentum-space
+  `<+q0|H|-q0>` identification used in the reduced transfer ansatz.
+- The reduced model uses a 120 nm centre-plane separation (56 nm facing-surface
+  separation for 64 nm layers), whereas the combined LLG audit uses a 120 nm
+  surface gap (184 nm centre-plane separation); these are separately declared
+  geometries and are not a quantitative cross-model match.
 - All apparent LLG even/odd separations remain below their native spectral
   resolution and are not reported as measured couplings.
 - The 20-to-16 nm LLG refinement preserves mode identity but shifts the
   mode-family centre by 2.87%; absolute frequency is therefore mesh sensitive.
-- The calculations establish a constrained route toward conditional operation,
+- The calculations define a constrained route toward conditional operation,
   not a simulated or demonstrated CNOT device.
 
 ## Repository structure
@@ -85,6 +94,10 @@ python revised_model/spinor2d_run_all.py
 It writes JSON/CSV reports, source arrays, figures, hashes, and a ZIP archive
 under `/kaggle/working/jphysd_spinor2d_run_all`. The archived reference report
 is available at [`results/reduced_model/run_all_report.json`](results/reduced_model/run_all_report.json).
+
+For a slower independent CPU replay, set `MAGNON_CNOT_FORCE_CPU=1` and set
+`MAGNON_CNOT_OUTPUT_DIR` to a path whose final directory name is
+`jphysd_spinor2d_run_all`. The report records the execution backend.
 
 The pipeline status is `NO-GO_REDUCED_MODEL` for the preregistered 80% device
 threshold. This negative quantitative result is retained; no gain or fitted

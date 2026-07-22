@@ -16,8 +16,10 @@
 # ════════════════════════════════════════════════════════════════════════════
 # 0.  IMPORTS + GPU
 # ════════════════════════════════════════════════════════════════════════════
-import os, math, time, warnings
+import os, math, sys, time, warnings
 import numpy as np
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -86,15 +88,15 @@ def legacy_K_WKB_proxy(d, dB):
     kap = np.sqrt(np.maximum(V0, 1e-30)/(hbar*D_zz))
     return (omega0/np.pi)*np.exp(-kap*d)
 
-def F_bound(K):
-    """Population fidelity bound  F ≥ 1 - πΓ/K  [from exp(-2Γτ_g) ≈ 1-2Γτ_g]."""
-    return 1.0 - np.pi*Gamma0/np.maximum(K, 1.0)
+def F_loss_exact(K):
+    """Loss-only ceiling exp(-πΓ/K) for an otherwise perfect half-Rabi flip."""
+    return np.exp(-np.pi*Gamma0/np.maximum(K, 1.0))
 
 def tau_gate(K):
     """Half-Rabi gate time  τ = π/(2K) [s]."""
     return np.pi/(2.0*np.maximum(K, 1.0))
 
-K_star = np.pi*Gamma0/0.01               # K for F≥0.99  → K*/2π ≈ 236 MHz
+K_star = np.pi*Gamma0/(-np.log(0.99))    # exact K for F_loss≥0.99
 K_demo = 2.0*np.pi*250e6                 # operating point (> K*), τ_g = 1.0 ns
 T_demo = tau_gate(K_demo)*1e9             # ns
 print(f"   K*/2π  = {K_star/(2*np.pi)/1e6:.1f} MHz  (F≥0.99 threshold)")
@@ -400,7 +402,7 @@ bell_F   = abs(np.vdot(bell_tgt, bell))**2
 print(f"\n── Part 5: Ideal algebra reference (not device evidence) ───────")
 print(f"  H overlap = {H_ov:.6f}")
 print(f"  Formal two-bit vector overlap = {bell_F:.6f}")
-print("  Scope: classical affine truth-table algebra; no entanglement/BQP claim")
+print("  Scope: basis-state NOT/CNOT affine algebra; no entanglement/BQP claim")
 
 # ════════════════════════════════════════════════════════════════════════════
 # 10. MATPLOTLIB STYLE
@@ -442,12 +444,12 @@ ax.text(0.97,0.92,r'$d=1\,\mu$m',transform=ax.transAxes,ha='right',fontsize=8)
 ax.grid(True,which='both',alpha=0.2,ls=':',lw=0.5)
 
 ax=ax1[1,0]
-ax.semilogx(K_arr/(2*np.pi*1e6), F_bound(K_arr), 'k',lw=1.5,
-            label=r'$F_{\max}=1-\pi\Gamma/K$')
+ax.semilogx(K_arr/(2*np.pi*1e6), F_loss_exact(K_arr), 'k',lw=1.5,
+            label=r'$F_{\rm loss}=e^{-\pi\Gamma/K}$')
 ax.axhline(0.99,color='red',ls='--',lw=1.0,label='$F=0.99$')
 ax.axvline(K_star/(2*np.pi*1e6),color=C3,ls=':',lw=1.0,
            label=f'$K^*={K_star/(2*np.pi*1e6):.0f}$ MHz')
-ax.set_xlabel(r'$K_{\max}/2\pi$ (MHz)'); ax.set_ylabel(r'$F_{\max}$')
+ax.set_xlabel(r'$K_{\max}/2\pi$ (MHz)'); ax.set_ylabel(r'$F_{\rm loss}$')
 ax.set_title('(c)',loc='left',fontweight='bold'); ax.set_ylim(0.60,1.02)
 ax.legend(loc='lower right',fontsize=7.5)
 ax.grid(True,which='both',alpha=0.2,ls=':',lw=0.5)
@@ -462,7 +464,7 @@ ax.set_title('(d)',loc='left',fontweight='bold')
 ax.legend(loc='upper center',fontsize=8); ax.set_xlim(-22,22)
 ax.grid(True,alpha=0.2,ls=':',lw=0.5)
 
-fig1.suptitle('Analytical theory — WKB Josephson coupling and fidelity bound',
+fig1.suptitle('Legacy WKB proxy and exact loss-only benchmark',
               fontsize=10,fontweight='bold')
 fig1.savefig('fig1_theory.pdf'); fig1.savefig('fig1_theory.png',dpi=200)
 print("  ✓ fig1_theory")
@@ -490,14 +492,14 @@ for k,(ctrl,tgt,lbl,eB) in enumerate(truth_cases):
 # (e) density map
 ax_d=fig2.add_subplot(gs2[1,:])
 sf=sims[('1','0')]
-dens=(sf['N_Bp']+sf['N_Bm']+sf['N_Ap']+sf['N_Am'])
+dens=sf['N_Bp']+sf['N_Bm']
 ext=[sf['t_ns'][0],sf['t_ns'][-1],sf['z_um'][0],sf['z_um'][-1]]
 im=ax_d.imshow(dens.T,origin='lower',aspect='auto',extent=ext,cmap='magma')
-plt.colorbar(im,ax=ax_d,label=r'$\sum|\psi|^2$',pad=0.01,fraction=0.018)
+plt.colorbar(im,ax=ax_d,label=r'$\sum_\pm|\psi_{B\pm}|^2$',pad=0.01,fraction=0.018)
 ax_d.axhline( 0.5,color='cyan',ls='--',lw=0.8,alpha=0.8)
 ax_d.axhline(-0.5,color='cyan',ls='--',lw=0.8,alpha=0.8)
 ax_d.set_xlabel('$t$ (ns)'); ax_d.set_ylabel(r'$z$ (µm)')
-ax_d.set_title(r'(e)  $|\psi(z,t)|^2$ — case $|10\rangle\!\to\!|11\rangle$',
+ax_d.set_title(r'(e)  target $\sum_\pm|\psi_{B\pm}(z,t)|^2$ — $|10\rangle\!\to\!|11\rangle$',
                loc='left',fontweight='bold',fontsize=9)
 
 # (f) Bloch
@@ -612,7 +614,8 @@ fig4,ax4=plt.subplots(1,3,figsize=(10,3.5))
 fig4.subplots_adjust(wspace=0.38)
 
 ax=ax4[0]
-ax.plot(noise_sw, F_n_sw,'ko-',ms=5,lw=1.5)
+ax.plot(noise_sw, F_n_sw,'ko-',ms=5,lw=1.5,
+        label='Ensemble (N=300/input)')
 ax.axvline(sig_th,color='red',ls='--',lw=1.0,
            label=f'300 K noise\n$\\sigma_{{th}}={sig_th:.4f}$')
 ax.axhline(0.99,color=C3,ls=':',lw=1.0,label='$F=0.99$')
@@ -625,8 +628,8 @@ ax=ax4[1]
 ax.semilogx(K_ens_sw/(2*np.pi*1e6),F_K_sw,'ko-',ms=4,lw=1.5,
             label='Ensemble (N=200)')
 Ka=np.logspace(7.5,9.5,200)
-ax.semilogx(Ka/(2*np.pi*1e6),F_bound(Ka),'b--',lw=1.2,
-            label=r'$1-\pi\Gamma/K$')
+ax.semilogx(Ka/(2*np.pi*1e6),F_loss_exact(Ka),'b--',lw=1.2,
+            label=r'$F_{\rm loss}=e^{-\pi\Gamma/K}$')
 ax.axvline(K_demo/(2*np.pi*1e6),color='red',ls='--',lw=1.0,label='Op. pt.')
 ax.axhline(0.99,color=C3,ls=':',lw=1.0)
 ax.set_xlabel(r'$K_{\max}/2\pi$ (MHz)'); ax.set_ylabel('Fidelity $F$')
@@ -643,13 +646,13 @@ ax.set_xticklabels([r'$|00\rangle$',r'$|01\rangle$',
                     r'$|10\rangle$',r'$|11\rangle$'])
 ax.axhline(0.99,color='red',ls='--',lw=1.0,label='$F=0.99$')
 ax.set_ylim(0.80,1.06); ax.set_ylabel('Fidelity $F$')
-ax.set_title(f'(c) $\\bar{{F}}={F_ens_mean:.4f}\\pm{F_ens_std:.4f}$',
+ax.set_title(f'(c) N=500/input, $\\bar{{F}}={F_ens_mean:.4f}$ (SEM $\\leq{F_ens_std:.4f}$)',
              loc='left',fontweight='bold',fontsize=9)
 for k2,(f,e) in enumerate(zip(F_ens,F_err)):
     ax.text(k2,f+e+0.004,f'{f:.3f}',ha='center',fontsize=7.5)
 ax.legend(fontsize=8); ax.grid(True,axis='y',alpha=0.2,ls=':',lw=0.5)
 
-fig4.suptitle(f'Ensemble fidelity — 500 trajectories, $T=300\\,$K, no renormalisation',
+fig4.suptitle('Ideal prescribed-coupling ensemble — $T=300\\,$K, no renormalisation',
               fontsize=10,fontweight='bold')
 fig4.savefig('fig4_ensemble.pdf'); fig4.savefig('fig4_ensemble.png',dpi=200)
 print("  ✓ fig4_ensemble")
@@ -681,14 +684,14 @@ summary = f"""
 ║    F_avg   = {np.mean(tt_F):.4f}                                       ║
 ║                                                                 ║
 ║  Part 4: Ensemble (500 traj, 300K, no pump)                     ║
-║    F_avg = {F_ens_mean:.4f} ± {F_ens_std:.4f}                              ║
+║    F_avg = {F_ens_mean:.4f}; mean per-case SEM≤{F_ens_std:.4f}            ║
 ║    σ_thermal = {sig_th:.5f}                                  ║
-║    Analytical bound at K_demo: {F_bound(K_demo):.4f}                   ║
+║    Exact loss-only ceiling at K_demo: {F_loss_exact(K_demo):.4f}              ║
 ║                                                                 ║
 ║  Part 5: Ideal matrix-algebra reference                         ║
 ║    H overlap = {H_ov:.4f}                                        ║
 ║    Formal two-bit vector overlap = {bell_F:.4f}                     ║
-║    Classical affine reference; no entanglement or BQP claim     ║
+║    Basis-state NOT/CNOT affine scope; no entanglement/BQP claim ║
 ║                                                                 ║
 ║  Figures: fig1_theory / fig2_dynamics / fig3_sweep / fig4_ensemble  ║
 ║                                                                 ║

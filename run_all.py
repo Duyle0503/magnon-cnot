@@ -10,14 +10,17 @@ Usage:
     python run_all.py           # full run (GPU recommended, ~15 min on T4)
     python run_all.py --cpu     # force CPU mode
 """
-import os, time, warnings
+import os, sys, time, warnings
 import numpy as np
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 warnings.filterwarnings("ignore")
 np.random.seed(20260519)
 
 from magnon_cnot.constants import Gamma0, kB, T_K, hbar, omega0, sig_th
-from magnon_cnot.theory import legacy_K_WKB_proxy, F_bound, tau_gate, K_star, K_demo, T_demo
+from magnon_cnot.theory import legacy_K_WKB_proxy, F_loss_exact, tau_gate, K_star, K_demo, T_demo
 from magnon_cnot.grid import GPU, dz
 from magnon_cnot.gpe import run_sim, integ
 from magnon_cnot.reduced_model import fidelity_4m, ensemble_F
@@ -80,10 +83,10 @@ print(f"  Optimal: d={d_sw[idx[0]]:.2f}µm  dB={dB_sw[idx[1]]:.1f}mT"
       f"  K={K_Kd[idx]/(2*np.pi)/1e6:.1f}MHz  F={F_Kd[idx]:.4f}")
 
 # ── Part 4: Ensemble fidelity ────────────────────────────────────────────────
-print("\n── Part 4: Ensemble fidelity (500 traj, 300K, no pump) ─────────")
+print("\n── Part 4: Ensemble fidelity (300 K, no pump) ─────────────────")
 t0 = time.time()
 F_ens, F_err, F_ens_mean, F_ens_std = ensemble_F(K_demo, N=500)
-print(f"  Grand mean  F = {F_ens_mean:.4f} ± {F_ens_std:.4f}  [{time.time()-t0:.1f}s]")
+print(f"  Grand mean  F = {F_ens_mean:.4f}; mean per-case SEM = {F_ens_std:.4f}  [{time.time()-t0:.1f}s]")
 for (c, t, _, eB), f, e in zip(truth_cases, F_ens, F_err):
     print(f"  {c}{t}→{'1' if eB == '1' else '0'}   F = {f:.4f} ± {e:.4f}")
 
@@ -119,11 +122,11 @@ summary = f"""
 ║  τ_gate = {tau_gate(K_demo)*1e9:6.2f} ns    at K/2π={K_demo/(2*np.pi)/1e6:.0f} MHz           ║
 ║                                                                 ║
 ║  GPE truth-table (pumped):  F_avg = {np.mean(tt_F):.4f}                  ║
-║  Ensemble (500 traj, 300K): F_avg = {F_ens_mean:.4f} ± {F_ens_std:.4f}         ║
-║  Analytical bound at K_demo:        {F_bound(K_demo):.4f}                ║
+║  Ensemble (500 traj, 300K): F_avg = {F_ens_mean:.4f}; SEM≤{F_ens_std:.4f}     ║
+║  Exact loss-only ceiling at K_demo:  {F_loss_exact(K_demo):.4f}                ║
 ║                                                                 ║
 ║  Formal H overlap={H_ov:.4f}; two-bit vector overlap={bell_F:.4f}      ║
-║  Classical affine-logic reference; no entanglement/BQP claim    ║
+║  Basis-state NOT/CNOT affine scope; no entanglement/BQP claim   ║
 ║                                                                 ║
 ║  LaTeX:  \\bar{{F}} = {F_ens_mean:.4f}  (T=300K)                        ║
 ╚══════════════════════════════════════════════════════════════════╝
@@ -131,5 +134,5 @@ summary = f"""
 print(summary)
 print("BOUNDARY: This output is an ideal assigned-coupling benchmark, not a geometry-resolved CNOT result.")
 
-with open('magnon_cnot_summary.txt', 'w') as f:
+with open('magnon_cnot_summary.txt', 'w', encoding='utf-8') as f:
     f.write(summary)

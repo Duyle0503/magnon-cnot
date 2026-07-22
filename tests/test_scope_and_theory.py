@@ -2,7 +2,8 @@ import unittest
 
 import numpy as np
 
-from magnon_cnot.theory import K_WKB
+from magnon_cnot.constants import Gamma0
+from magnon_cnot.theory import F_loss_exact, K_WKB
 from magnon_cnot.universality import CLASSICAL_LOGIC_SCOPE
 
 
@@ -42,6 +43,16 @@ class ScopeTests(unittest.TestCase):
         self.assertIn("classical", text)
         self.assertIn("non-entangling", text)
         self.assertIn("not a bqp", text)
+
+
+class LossOnlyCeilingTests(unittest.TestCase):
+    def test_exact_loss_only_expression(self):
+        K = 2.0 * np.pi * 250e6
+        self.assertAlmostEqual(
+            float(F_loss_exact(K)),
+            float(np.exp(-np.pi * Gamma0 / K)),
+            places=15,
+        )
 
 
 if __name__ == "__main__":

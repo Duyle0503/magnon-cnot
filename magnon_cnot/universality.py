@@ -1,9 +1,11 @@
 """Ideal matrix-algebra reference for the proposed classical truth table.
 
 These matrices do not establish physical entanglement or quantum-computational
-universality for a classical magnon-BEC order parameter. CNOT plus one-bit
-operations generates affine reversible Boolean maps; nonlinear reversible
-logic requires an additional genuine three-bit primitive.
+universality for a classical magnon-BEC order parameter.  Restricted to
+computational-basis Boolean permutations, NOT and CNOT (plus wire swaps)
+generate affine reversible maps.  The continuous H/S/T analog rotations are
+not themselves Boolean permutations, and nonlinear reversible logic requires
+an additional genuine nonlinear primitive.
 """
 import math
 import numpy as np
@@ -28,7 +30,10 @@ CNOT_mat = np.array([[1, 0, 0, 0],
                       [0, 0, 0, 1],
                       [0, 0, 1, 0]], complex)
 
-# Formal matrix checks only; these are not device simulations.
+# Formal matrix checks only; these are not device simulations.  Applying the
+# formal tensor-product CNOT matrix to a superposition can produce an entangled
+# vector in Hilbert-space algebra, but that vector is not a physical prediction
+# for the classical, non-entangling order-parameter platform.
 H_tgt   = (1 / np.sqrt(2)) * np.array([[1, 1], [1, -1]], complex)
 H_ov    = abs(np.trace(H_mat.conj().T @ H_tgt)) / 2
 
@@ -38,6 +43,7 @@ bell_tgt = (1 / np.sqrt(2)) * np.array([1, 0, 0, 1], complex)
 bell_F   = abs(np.vdot(bell_tgt, bell))**2
 
 CLASSICAL_LOGIC_SCOPE = (
-    "ideal affine reversible truth-table algebra; classical and non-entangling; "
+    "computational-basis NOT/CNOT affine truth-table algebra; classical and "
+    "non-entangling; H/S/T analog rotations are not Boolean permutations; "
     "not a BQP-universality claim"
 )

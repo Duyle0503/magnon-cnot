@@ -52,12 +52,28 @@ def legacy_K_WKB_proxy(d, dB):
     return (omega0 / np.pi) * np.exp(-kap * d)
 
 
-def F_bound(K):
-    """Population fidelity bound  F >= 1 - pi*Gamma/K.
+def F_loss_exact(K):
+    """Loss-only population ceiling for an otherwise perfect half-Rabi flip.
 
-    Derived from exp(-2*Gamma*tau_g) where tau_g = pi/(2K).
+    This is ``exp(-pi*Gamma/K)`` for ``tau_g = pi/(2K)``.  It is not a lower
+    bound on the total gate fidelity: coherent and implementation errors can
+    reduce the target-state projection further.
     """
+    return np.exp(-np.pi * Gamma0 / np.maximum(K, 1.0))
+
+
+def F_loss_linear(K):
+    """First-order large-``K`` approximation to :func:`F_loss_exact`."""
     return 1.0 - np.pi * Gamma0 / np.maximum(K, 1.0)
+
+
+def F_bound(K):
+    """Backward-compatible alias for the exact loss-only ceiling.
+
+    The historical function name is retained for scripts that imported it,
+    but the returned quantity is no longer described as a fidelity lower bound.
+    """
+    return F_loss_exact(K)
 
 
 def tau_gate(K):
@@ -66,6 +82,6 @@ def tau_gate(K):
 
 
 # Ideal prescribed-coupling benchmark; not extracted from the reported geometry.
-K_star = np.pi * Gamma0 / 0.01             # K for F>=0.99
+K_star = np.pi * Gamma0 / (-np.log(0.99))  # exact K for F_loss>=0.99
 K_demo = 2.0 * np.pi * 250e6              # assigned ideal benchmark
 T_demo = tau_gate(K_demo) * 1e9            # gate time [ns]

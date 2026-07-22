@@ -80,7 +80,8 @@ def propagate_batch(s0, K_max, Gam, T_sim, Nt=400):
 def ensemble_F(K_max, Gam=Gamma0, N=500, noise=sig_th, Nt=400):
     """Ensemble-averaged truth-table fidelity (no renorm, absolute populations).
 
-    Returns (F_per_case, F_err_per_case, F_mean, F_mean_err)
+    Returns per-case means, per-case standard errors, the grand mean, and the
+    mean of the four per-case standard errors.
     """
     pure  = {'0': (1 + 0j, 1e-3 + 0j), '1': (1e-3 + 0j, 1 + 0j)}
     cases = [('0', '0', '0'), ('0', '1', '1'), ('1', '0', '1'), ('1', '1', '0')]

@@ -1,13 +1,24 @@
 """Spatial grid and GPU/CPU backend selection."""
+import os
+import sys
+
 import numpy as np
 
-try:
-    import cupy as cp
-    xp  = cp
-    GPU = True
-except ImportError:
+FORCE_CPU = "--cpu" in sys.argv or os.environ.get("MAGNON_CNOT_FORCE_CPU", "0") == "1"
+
+if FORCE_CPU:
     xp  = np
     GPU = False
+else:
+    try:
+        import cupy as cp
+        if cp.cuda.runtime.getDeviceCount() < 1:
+            raise RuntimeError("no CUDA device available")
+        xp  = cp
+        GPU = True
+    except (ImportError, OSError, RuntimeError):
+        xp  = np
+        GPU = False
 
 
 def to_np(a):
