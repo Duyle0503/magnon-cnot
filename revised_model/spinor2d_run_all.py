@@ -490,47 +490,52 @@ def savefig(fig,stem):
  fig.savefig(FIGDIR/f"{stem}.png",dpi=600)
  plt.close(fig)
 
-# Figure 1: restrained schematic with the control lines requested by Referee 1.
-fig=plt.figure(figsize=(7.05,3.00)); gs=fig.add_gridspec(1,3,width_ratios=(1.62,1.00,.92),wspace=.42,left=.065,right=.988,bottom=.14,top=.89)
+# Figure 1: schematic generated from the selected geometry. Callouts are kept
+# outside one another so the panel remains legible at the journal page width.
+def schematic_callout(ax,text,xy,xytext,color,ha="center",va="center"):
+ ax.annotate(text,xy=xy,xytext=xytext,arrowprops=dict(arrowstyle="-",lw=.65,color=color),
+             ha=ha,va=va,fontsize=6.2,color=color,
+             bbox=dict(boxstyle="round,pad=.12",fc="white",ec="none",alpha=.92),annotation_clip=False)
+fig=plt.figure(figsize=(7.08,3.12)); gs=fig.add_gridspec(1,3,width_ratios=(1.76,.96,.90),wspace=.46,left=.070,right=.988,bottom=.15,top=.86)
 ax=fig.add_subplot(gs[0]); panel(ax,"(a)")
 ax.add_patch(Ellipse((0,CFG["target_centre_y_m"]*1e6),2*CFG["target_radius_x_m"]*1e6,2*CFG["target_radius_y_m"]*1e6,fc="#d7ebf4",ec=BLUE,lw=1.15,zorder=1))
 ax.add_patch(Ellipse((0,best["control_y_m"]*1e6),2*best["control_radius_m"]*1e6,2*best["control_radius_m"]*1e6,fc="none",ec=RED,lw=1.15,ls="--",zorder=3))
-ax.annotate(r"target B ($\pm q_0$)",xy=(.90,1.05),xytext=(1.60,1.58),arrowprops=dict(arrowstyle="-",lw=.65,color=BLUE),ha="center",color=BLUE,fontsize=7.2)
-ax.annotate("control A",xy=(-.30,-.12),xytext=(-1.55,-1.03),arrowprops=dict(arrowstyle="-",lw=.65,color=RED),ha="center",color=RED,fontsize=7.2)
+ax.text(-.28,.92,r"target B ($\pm q_0$)",ha="center",va="center",color=BLUE,fontsize=6.8)
+schematic_callout(ax,"control A",(-.30,-.13),(-1.28,-1.02),RED)
 # Pump strip over the control region.
 ax.plot([-1.10,1.10],[-.53,-.53],color=GREY,lw=3.0,solid_capstyle="butt",zorder=2)
-ax.text(0,-.67,"pump line",ha="center",va="top",fontsize=6.6,color=GREY)
+ax.text(0,-.67,"pump line",ha="center",va="top",fontsize=6.4,color=GREY)
 # Phase-gradient preparation array at the left and matched receiver at the right.
 for yy in np.linspace(-.42,.30,6):
  ax.plot([-2.08,-1.88],[yy,yy],color=BLUE,lw=1.25,solid_capstyle="butt")
  ax.plot([1.88,2.08],[yy,yy],color=ORANGE,lw=1.25,solid_capstyle="butt")
-ax.annotate("phase-gradient\npreparation",xy=(-1.98,-.05),xytext=(-1.56,.67),arrowprops=dict(arrowstyle="-",lw=.6,color=BLUE),ha="center",va="bottom",fontsize=6.4,color=BLUE)
-ax.annotate("matched receiver",xy=(1.98,-.05),xytext=(1.45,-1.25),arrowprops=dict(arrowstyle="-",lw=.6,color=ORANGE),ha="center",va="top",fontsize=6.4,color=ORANGE)
+schematic_callout(ax,"phase-gradient\narray",(-1.98,-.05),(-1.55,.58),BLUE)
+schematic_callout(ax,"matched\nreceiver",(1.98,-.05),(1.48,-1.13),ORANGE)
 # The receiver feeds one local barrier-transducer line next to the target.
-ax.plot([2.08,2.22,2.22,.70],[.18,.18,1.17,1.17],color=ORANGE,lw=1.05,clip_on=False)
-ax.add_patch(Rectangle((.60,1.10),.44,.14,fc="#fee8c8",ec=ORANGE,lw=.8,zorder=4))
-ax.text(.82,1.28,"barrier transducer",ha="center",va="bottom",fontsize=6.2,color=ORANGE)
+ax.plot([2.08,2.22,2.22,.70],[.18,.18,1.24,1.24],color=ORANGE,lw=1.05,clip_on=False)
+ax.add_patch(Rectangle((.60,1.17),.44,.14,fc="#fee8c8",ec=ORANGE,lw=.8,zorder=4))
+schematic_callout(ax,"barrier\ntransducer",(.82,1.24),(1.45,1.53),ORANGE)
 # Cascaded phase-resolved input uses the same preparation/receiver interface.
-ax.annotate("cascade input",xy=(-2.06,.25),xytext=(-1.58,1.36),arrowprops=dict(arrowstyle="->",lw=.8,color="#6a3d9a"),ha="center",va="bottom",fontsize=6.3,color="#6a3d9a")
+schematic_callout(ax,"cascade\ninput",(-2.06,.25),(-1.78,1.44),"#6a3d9a")
 # Readout ports are schematic and do not imply simulated optical/RF efficiency.
-ax.annotate("BLS / inductive readout",xy=(.15,1.17),xytext=(-.35,1.60),arrowprops=dict(arrowstyle="->",lw=.75,color=GREEN),ha="center",va="bottom",fontsize=6.1,color=GREEN)
-ax.set(xlabel=r"$x$ ($\mu$m)",ylabel=r"$y$ ($\mu$m)",xlim=(-2.35,2.35),ylim=(-1.48,1.93),aspect="equal"); ax.set_title("Device and control lines",pad=3)
+schematic_callout(ax,"BLS / inductive\nreadout",(.15,1.17),(-.46,1.55),GREEN)
+ax.set(xlabel=r"$x$ ($\mu$m)",ylabel=r"$y$ ($\mu$m)",xlim=(-2.35,2.35),ylim=(-1.48,1.82),aspect="equal"); ax.set_title("Device and control lines",pad=7)
 
 ax=fig.add_subplot(gs[1]); panel(ax,"(b)"); ax.set(xlim=(0,1),ylim=(0,1)); ax.axis("off")
-ax.add_patch(Rectangle((.18,.67),.62,.10,fc="#d7ebf4",ec=BLUE,lw=1.0)); ax.add_patch(Rectangle((.31,.25),.36,.10,fc="#fde0d2",ec=RED,lw=1.0))
-ax.text(.49,.82,"target layer",ha="center",color=BLUE); ax.text(.49,.15,"control layer",ha="center",color=RED)
-ax.text(.83,.72,"64 nm",va="center",fontsize=7.2); ax.text(.70,.30,"64 nm",va="center",fontsize=7.2)
-ax.annotate("",xy=(.90,.67),xytext=(.90,.35),arrowprops=dict(arrowstyle="<->",lw=.85,color=GREY)); ax.text(.94,.51,"120 nm",rotation=90,ha="center",va="center",fontsize=7.2)
-for xx in (.41,.49,.57): ax.add_patch(FancyArrowPatch((xx,.37),(xx,.65),connectionstyle="arc3,rad=.18",arrowstyle="->",mutation_scale=7,color=".35",lw=.65))
-ax.set_title("Layer separation",pad=3)
+ax.add_patch(Rectangle((.14,.68),.62,.10,fc="#d7ebf4",ec=BLUE,lw=1.0)); ax.add_patch(Rectangle((.27,.24),.36,.10,fc="#fde0d2",ec=RED,lw=1.0))
+ax.text(.45,.83,"target layer",ha="center",color=BLUE); ax.text(.45,.14,"control layer",ha="center",color=RED)
+ax.text(.80,.73,f'{CFG["film_thickness_m"]*1e9:.0f} nm',va="center",fontsize=7.0); ax.text(.67,.29,f'{CFG["film_thickness_m"]*1e9:.0f} nm',va="center",fontsize=7.0)
+ax.annotate("",xy=(.89,.68),xytext=(.89,.34),arrowprops=dict(arrowstyle="<->",lw=.85,color=GREY)); ax.text(.94,.51,f'{best["z_m"]*1e9:.0f} nm',rotation=90,ha="center",va="center",fontsize=7.0)
+for xx in (.37,.45,.53): ax.add_patch(FancyArrowPatch((xx,.36),(xx,.66),connectionstyle="arc3,rad=.18",arrowstyle="->",mutation_scale=7,color=".35",lw=.65))
+ax.set_title("Layer separation",pad=7)
 
 ax=fig.add_subplot(gs[2]); panel(ax,"(c)"); ax.set(xlim=(0,1),ylim=(0,1)); ax.axis("off")
 ys=[.88,.67,.43,.18]; labels=["parametric pump",r"prepare $\pm q_0$"+"\nor cascade input","common interval", "BLS / inductive\nreadout"]
 colors=[".30",BLUE,ORANGE,GREEN]
 for j,(yy,txt,col) in enumerate(zip(ys,labels,colors)):
- ax.scatter(.18,yy,s=32,color=col,zorder=3); ax.text(.30,yy,txt,va="center",ha="left",fontsize=7.1)
- if j<len(ys)-1: ax.annotate("",xy=(.18,ys[j+1]+.04),xytext=(.18,yy-.04),arrowprops=dict(arrowstyle="->",lw=.8,color=".45"))
-ax.set_title("Operation sequence",pad=3)
+ ax.scatter(.17,yy,s=32,color=col,zorder=3); ax.text(.30,yy,txt,va="center",ha="left",fontsize=7.0)
+ if j<len(ys)-1: ax.annotate("",xy=(.17,ys[j+1]+.04),xytext=(.17,yy-.04),arrowprops=dict(arrowstyle="->",lw=.8,color=".45"))
+ax.set_title("Operation sequence",pad=7)
 savefig(fig,"fig1_device_protocol")
 
 # Reconstruct finest-grid arrays from the actual selected calculation.
